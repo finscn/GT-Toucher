@@ -1,0 +1,95 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="-1" />
+<meta http-equiv="Cache-Control" content="no-cache" />
+
+<meta name="viewport" content="user-scalable=no, width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+<title>Toucher Demo 1</title>
+	
+<link href="demo.css" rel="stylesheet" charset="utf-8" />
+
+<script src="../src/Controller.js"></script>
+<script src="../src/TouchWrapper.js"></script>
+<script src="../src/Listener.js"></script>
+
+<script src="../src/custom/DoubleTap.js"></script>
+
+
+<script>
+
+
+function setDomPos(dom,x,y){
+	dom.style.webkitTransform="translate3d("+ x+"px,"+y+"px,0px)";
+}
+
+function $id(id){
+	return document.getElementById(id);
+}
+
+window.onload=function(){
+	initToucher();
+}
+
+//创建一个tap listener的实例
+var testTap=new Toucher.DoubleTap({
+
+	isTrigger : function(touchWrapper,wrapperList,touchCoontroller){
+		// 只有点击了 id==tap_area 的dom对象,才会触发这个事件
+		// 条件可以是任意,不仅仅局限于dom的判断, 例如可以是点击的区域坐标 时间等等,
+		// 甚至可以和点击事件无关
+		return touchWrapper.target.id=="tap_area";
+	},
+
+	onTap : function(touchWrappers,event,touchController){
+		// tap事件要执行的动作
+		var touchWrapper=touchWrappers[0];
+		var tapX=touchWrapper.startPageX;
+		var tapY=touchWrapper.startPageY;
+		var endTime=touchWrapper.endTime;
+		$id("info").innerHTML="Double Tap pos ["+tapX+","+tapY+"], tap time:"+endTime;
+	}
+});
+
+
+var controller=new Toucher.Controller({
+	beforeInit : function(){
+		this.dom=document.body;
+	}
+});
+
+
+function initToucher(){
+	controller.init();
+
+	//把自定义事件注册到controller里
+	controller.addListener(testTap);
+}
+
+	</script>
+<style>
+#tap_area {
+	width : 200px;
+	height : 100px;
+	padding : 10px;
+	margin : 30px;
+	background-color : white;
+	border : 1px solid blue;
+	color : black;
+}
+</style>
+</head>
+<body >
+<div id="info">info</div>
+
+<div id="tap_area"> please double-tap me </div>
+</body>
+
+</html>
