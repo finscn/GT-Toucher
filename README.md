@@ -6,7 +6,7 @@ GT-Toucher 是对支持多点触控的浏览器(目前只测试了 iOS safari)�
 由**Controller, Listener, TouchWrapper**构成.其思路和传统的"在响应事件的对象上注册事件"的方式不同,而是事件委托方式的一个变种.
 
 最初构想这个工具主要是因为触控设备上"TouchEvent里包含若干TouchList,每个TouchList包含若干Touch对象"的三层结构,和传统的Mouse/Keyboard事件模型有较大差异,使用起来相对麻烦.
-而且浏览器自带的TouchEvent模型对与游戏来说,太过底层,功能远远不够.
+而且浏览器自带的touch事件对于游戏来说,太过底层,功能远远不够.
 
 
 
