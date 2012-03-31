@@ -47,7 +47,7 @@
 			return false;
 		},
 		/* Implement by user */
-		onTap : function(touchWrappers,deltaInfo,event,tc){
+		onTap : function(touchWrappers,event,touchController){
 
 		}
 
