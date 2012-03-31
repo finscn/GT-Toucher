@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-
-GT-Toucher - A Multi Touch Tool for Browser
-=======
 GT-Toucher -- A Multi Touch Tool for Browser
->>>>>>> update readme
 =========================
 
 GT-Toucher 是对支持多点触控的浏览器(目前只测试了 iOS safari)中touch事件的一个底层封装.
