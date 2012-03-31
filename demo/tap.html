@@ -46,7 +46,7 @@ var testTap=new Toucher.Tap({
 		return touchWrapper.target.id=="tap_area";
 	},
 
-	onTap : function(touchWrappers,deltaInfo,event,tc){
+	onTap : function(touchWrappers,event,touchController){
 		// tap事件要执行的动作
 		var touchWrapper=touchWrappers[0];
 		var tapX=touchWrapper.startPageX;
@@ -66,7 +66,7 @@ var controller=new Toucher.Controller({
 
 function initToucher(){
 	controller.init();
-	
+
 	//把自定义事件注册到controller里
 	controller.addListener(testTap);
 }

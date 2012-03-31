@@ -73,7 +73,7 @@ GT-Toucher 是对支持多点触控的浏览器(目前只测试了 iOS safari)�
 			return false;
 		},
 		/* Implement by user */
-		onTap : function(touchWrappers,deltaInfo,event,tc){
+		onTap : function(touchWrappers,event,touchController){
 
 		}
 
@@ -91,7 +91,7 @@ GT-Toucher 是对支持多点触控的浏览器(目前只测试了 iOS safari)�
 			return touchWrapper.target.id=="tap_area";
 		},
 
-		onTap : function(touchWrappers,deltaInfo,event,tc){
+		onTap : function(touchWrappers,event,touchController){
 			// tap事件要执行的动作
 			var touchWrapper=touchWrappers[0];
 			var tapX=touchWrapper.startPageX;
