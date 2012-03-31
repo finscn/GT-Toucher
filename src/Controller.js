@@ -42,10 +42,7 @@ Controller.prototype={
 
 		this.listenerList=[];
 		
-		this.startWrapperList={};
-		this.moveWrapperList={};
-		this.endWrapperList={};
-
+	
 		this.touched={};
 		this.touchedCount=0;
 

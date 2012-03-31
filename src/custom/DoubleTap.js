@@ -2,7 +2,7 @@
 	Toucher.DoubleTap=Toucher.Listener.extend({
 
 		delay : 800 ,
-		limit : 3,
+		limit : 5,
 
 		enabled : false ,
 
