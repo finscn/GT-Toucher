@@ -17,12 +17,13 @@
 	/* Use to create your custom-listener */
 	// It's duck-type, GT-Toucher doesn't care the result of "instanceof" 
 	Listener.extend=function(proto){
+		var pl=this;
 		var con=function(cfg){
 			for (var property in cfg ){
 				this[property]=cfg[property];
 			}
 		};
-		var pt=NS.Listener.prototype;
+		var pt=pl.prototype;
 		for (var property in pt ){
 			con.prototype[property]=pt[property];
 		}
@@ -30,6 +31,7 @@
 			con.prototype[property]=proto[property];
 		}
 		con.prototype.constructor=con;
+		con.extend=pl.extend;
 		return con;
 	}
 

@@ -10,39 +10,36 @@
 
 		enabled : false ,
 
+		checkMoveArea : function(touchWrapper){
+			var dx=Math.abs(touchWrapper.moveAmountX);
+			var dy=Math.abs(touchWrapper.moveAmountY);
+
+			// 如果手指按在屏幕上时,有移动,且移动范围大于3像素,则无效
+			return dx<=this.limit && dy<=this.limit;
+		},
+		checkEndTime : function(touchWrapper){
+			return (touchWrapper.endTime-touchWrapper.startTime)<=this.delay;
+		},
+
 		start : function(wrapperList,event,touchController){
 			// 只有一根手指时有效
 			this.enabled=wrapperList.length==1;
 		},
 
-		move : function(wrapperList,event,touchController){
-			if (this.enabled){
-				var touchWrapper=wrapperList[0];
-				var dx=Math.abs(touchWrapper.moveAmountX);
-				var dy=Math.abs(touchWrapper.moveAmountY);
-
-				// 如果手指按在屏幕上时,有移动,且移动范围大于3像素,则无效
-				if (dx>this.limit || dy>this.limit){
-					this.enabled=false;
-				}			
-			}
-		},
-
 		end : function(wrapperList,event,touchController){
-			var touchWrapper=wrapperList[0];
 
-			//手指在屏幕上抬起的太迟了, 也无效
-			if ((touchWrapper.endTime-touchWrapper.startTime)>this.delay){
-				this.enabled=false;
-			}
-
-			if (this.enabled){
-				// tap事件要执行的动作
-				this.onTap(wrapperList,event,touchController);
+			if (this.enabled && wrapperList.length===1){
+				//在屏幕上的手指是否在指定区域和时间范围内抬起,太迟了会视为无效tap
+				if ( this.checkMoveArea(wrapperList[0]) && this.checkEndTime(wrapperList[0]) ){
+					// tap事件要执行的动作
+					this.onTap(wrapperList,event,touchController);
+				}
 			}
 
 			this.enabled=false;
 		},
+
+
 
 		/* Implement by user */
 		isTrigger : function(touchWrapper,wrapperList,touchController){

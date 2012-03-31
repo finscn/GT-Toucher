@@ -21,7 +21,7 @@
 <script src="../src/Listener.js"></script>
 
 <script src="../src/custom/Tap.js"></script>
-<script src="../src/custom/DoubleTap.js"></script>
+<script src="../src/custom/TwoTaps.js"></script>
 
 
 <script>
@@ -40,7 +40,7 @@ window.onload=function(){
 }
 
 //创建一个tap listener的实例
-var testTap=new Toucher.DoubleTap({
+var testTap=new Toucher.TwoTaps({
 
 	isTrigger : function(touchWrapper,wrapperList,touchCoontroller){
 		// 只有点击了 id==tap_area 的dom对象,才会触发这个事件
@@ -78,7 +78,7 @@ function initToucher(){
 <style>
 #tap_area {
 	width : 200px;
-	height : 100px;
+	height : 200px;
 	padding : 10px;
 	margin : 30px;
 	background-color : white;
@@ -90,7 +90,7 @@ function initToucher(){
 <body >
 <div id="info">info</div>
 
-<div id="tap_area"> please double-tap me </div>
+<div id="tap_area"> please use 2 fingers tap me </div>
 </body>
 
 </html>
