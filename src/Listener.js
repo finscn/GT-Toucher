@@ -56,18 +56,18 @@
 		onInit : function(){},
 
 		/* Implement by user */
-		isTrigger : function(touchWrapper){
+		isTrigger : function(touchWrapper,wrapperList,touchCoontroller){
 			return false;
 		},
 
 		/* Implement by user */
-		// function(touchWrappers, event, touchCoontroller){ } 
+		// function(wrapperList, event, touchCoontroller){ } 
 		start : null , 
 
-		// function(touchWrappers, event, touchCoontroller){ } 
+		// function(wrapperList, event, touchCoontroller){ } 
 		move : null ,
 
-		// function(touchWrappers, event, touchCoontroller){ } 
+		// function(wrapperList, event, touchCoontroller){ } 
 		end : null 
 
 	};

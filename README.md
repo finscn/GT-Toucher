@@ -69,7 +69,7 @@ GT-Toucher 是对支持多点触控的浏览器(目前只测试了 iOS safari)�
 		},
 
 		/* Implement by user */
-		isTrigger : function(touchWrapper){
+		isTrigger : function(touchWrapper,wrapperList,touchCoontroller){
 			return false;
 		},
 		/* Implement by user */
@@ -86,7 +86,7 @@ GT-Toucher 是对支持多点触控的浏览器(目前只测试了 iOS safari)�
 	//创建一个tap listener的实例	
 	var testTap=new Toucher.Tap({
 
-		isTrigger : function(touchWrapper){
+		isTrigger : function(touchWrapper,wrapperList,touchCoontroller){
 			// 只有点击了 id==tap_area 的dom对象,才会触发这个事件
 			return touchWrapper.target.id=="tap_area";
 		},

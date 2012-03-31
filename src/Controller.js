@@ -41,11 +41,10 @@ Controller.prototype={
 	init : function(){
 
 		this.listenerList=[];
-		this.moveListeners={};
 		
-		this.startTouchList={};
-		this.moveTouchList={};
-		this.endTouchList={};
+		this.startWrapperList={};
+		this.moveWrapperList={};
+		this.endWrapperList={};
 
 		this.touched={};
 		this.touchedCount=0;
@@ -118,27 +117,27 @@ Controller.prototype={
 
 	start : function(event){
 
-		var touchList=this.getStartTouchList(event);
-		this._fire("start",touchList);
+		var wrapperList=this.getStartWrapperList(event);
+		this._fire("start",wrapperList);
 
 	},
 	move : function(event){
 
-		var touchList=this.getMoveTouchList(event);
+		var wrapperList=this.getMoveWrapperList(event);
 
-		this._fire("move",touchList);
+		this._fire("move",wrapperList);
 
 	},
 	end : function(event){
 
-		var touchList=this.getEndTouchList(event);
+		var wrapperList=this.getEndWrapperList(event);
 
-		this._fire("end",touchList);
+		this._fire("end",wrapperList);
 
 	},
 
-	getStartTouchList : function(event){	
-		var startTouchList=[];
+	getStartWrapperList : function(event){	
+		var startWrapperList=[];
 		var changedList=event[CONST.changedTouches]||[event];
 		for (var i=changedList.length-1;i>=0;i--){
 			var touch=changedList[i];
@@ -151,18 +150,18 @@ Controller.prototype={
 				touchWrapper.onStart(touch);			
 				this.touched[ touchId ]=touchWrapper;
 				this.touchedCount++;	
-				startTouchList.push(touchWrapper);
+				startWrapperList.push(touchWrapper);
 			}else if (this.useMouse){
 				touchWrapper.onStart(touch);
 				this.touchedCount=1;
-				startTouchList.push(touchWrapper);
+				startWrapperList.push(touchWrapper);
 			}
 		}			
-		return startTouchList;
+		return startWrapperList;
 	},
 
-	getMoveTouchList : function(event){	
-		var moveTouchList=[];
+	getMoveWrapperList : function(event){	
+		var moveWrapperList=[];
 		var changedList=event[CONST.changedTouches]||[event];
 		for (var i=changedList.length-1;i>=0;i--){
 			var touch=changedList[i];
@@ -177,14 +176,14 @@ Controller.prototype={
 			}
 			if ( touchWrapper ){
 				touchWrapper.onMove(touch);
-				moveTouchList.push(touchWrapper);		
+				moveWrapperList.push(touchWrapper);		
 			}
 		}
-		return moveTouchList;
+		return moveWrapperList;
 	},
 
-	getEndTouchList : function(event){	
-		var endTouchList=[];
+	getEndWrapperList : function(event){	
+		var endWrapperList=[];
 
 		var changedList=event[CONST.changedTouches]||[event];
 		
@@ -213,25 +212,25 @@ Controller.prototype={
 					}else{
 						this.touchedCount=0;
 					}
-					endTouchList.push(touchWrapper);
+					endWrapperList.push(touchWrapper);
 				}
 			}
 		}
 
-		return endTouchList;
+		return endWrapperList;
 	},
 
-	_fire : function(type,touchList){
+	_fire : function(type,wrapperList){
 
-		var touchLast=touchList.length-1;
+		var touchLast=wrapperList.length-1;
 
 		for (var i=this.listenerList.length-1;i>=0;i--){
 			var listener=this.listenerList[i];
 			if (listener[type]!=null){
 				var list=[];
 				for (var j=touchLast;j>=0;j--){
-					var touchWrapper=touchList[j];
-					if (listener.isTrigger(touchWrapper)){
+					var touchWrapper=wrapperList[j];
+					if (listener.isTrigger(touchWrapper,wrapperList,this)){
 						list.push(touchWrapper)
 					}
 				}

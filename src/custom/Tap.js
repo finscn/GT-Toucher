@@ -10,13 +10,13 @@
 
 		enabled : false ,
 
-		start : function(touchWrappers,event,touchController){
+		start : function(wrapperList,event,touchController){
 			// 只有一根手指时有效
-			this.enabled=touchWrappers.length==1;
+			this.enabled=wrapperList.length==1;
 		},
 
-		move : function(touchWrappers,event,touchController){
-			var touchWrapper=touchWrappers[0];
+		move : function(wrapperList,event,touchController){
+			var touchWrapper=wrapperList[0];
 			var dx=Math.abs(touchWrapper.moveAmountX);
 			var dy=Math.abs(touchWrapper.moveAmountY);
 
@@ -26,8 +26,8 @@
 			}			
 		},
 
-		end : function(touchWrappers,event,touchController){
-			var touchWrapper=touchWrappers[0];
+		end : function(wrapperList,event,touchController){
+			var touchWrapper=wrapperList[0];
 
 			//手指在屏幕上抬起的太迟了, 也无效
 			if ((touchWrapper.endTime-touchWrapper.startTime)>this.delay){
@@ -36,18 +36,18 @@
 
 			if (this.enabled){
 				// tap事件要执行的动作
-				this.onTap(touchWrappers,event,touchController);
+				this.onTap(wrapperList,event,touchController);
 			}
 
 			this.enabled=false;
 		},
 
 		/* Implement by user */
-		isTrigger : function(touchWrapper){
+		isTrigger : function(touchWrapper,wrapperList,touchController){
 			return false;
 		},
 		/* Implement by user */
-		onTap : function(touchWrappers,event,touchController){
+		onTap : function(wrapperList,event,touchController){
 
 		}
 

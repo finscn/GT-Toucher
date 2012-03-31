@@ -41,8 +41,9 @@ window.onload=function(){
 //创建一个tap listener的实例
 var testTap=new Toucher.Tap({
 
-	isTrigger : function(touchWrapper){
+	isTrigger : function(touchWrapper,wrapperList,touchCoontroller){
 		// 只有点击了 id==tap_area 的dom对象,才会触发这个事件
+		// 条件可以是任意, 例如点击的区域坐标等等, 甚至可以和点击事件无关
 		return touchWrapper.target.id=="tap_area";
 	},
 
