@@ -88,6 +88,8 @@ GT-Toucher 是对支持多点触控的浏览器(目前只测试了 iOS safari)�
 
 		isTrigger : function(touchWrapper,wrapperList,touchCoontroller){
 			// 只有点击了 id==tap_area 的dom对象,才会触发这个事件
+			// 条件可以是任意,不仅仅局限于dom的判断, 例如可以是点击的区域坐标 时间等等,
+			// 甚至可以和点击事件无关
 			return touchWrapper.target.id=="tap_area";
 		},
 
