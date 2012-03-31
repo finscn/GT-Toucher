@@ -1,12 +1,8 @@
-<<<<<<< HEAD
-
 GT-Toucher - A Multi Touch Tool for Browser
-=======
-GT-Toucher -- A Multi Touch Tool for Browser
->>>>>>> update readme
 =========================
 
-GT-Toucher 是对支持多点触控的浏览器(目前只测试了 iOS safari)中touch事件的一个底层封装.
+
+Gt-Toucher 是对支持多点触控的浏览器(目前只测试了 iOS safari)中touch事件的一个底层封装.
 
 由**Controller, Listener, TouchWrapper**构成.其思路和传统的"在响应事件的对象上注册事件"的方式不同,而是事件委托方式的一个变种.
 
