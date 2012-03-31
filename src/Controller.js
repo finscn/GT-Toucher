@@ -41,8 +41,6 @@ Controller.prototype={
 	init : function(){
 
 		this.listenerList=[];
-		
-	
 		this.touched={};
 		this.touchedCount=0;
 
