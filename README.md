@@ -42,14 +42,16 @@ GT-Toucher 是对支持多点触控的浏览器(目前只测试了 iOS safari)�
 		},
 
 		move : function(touchWrappers,event,touchController){
-			var touchWrapper=touchWrappers[0];
-			var dx=Math.abs(touchWrapper.moveAmountX);
-			var dy=Math.abs(touchWrapper.moveAmountY);
+			if (this.enabled){
+				var touchWrapper=touchWrappers[0];
+				var dx=Math.abs(touchWrapper.moveAmountX);
+				var dy=Math.abs(touchWrapper.moveAmountY);
 
-			// 如果手指按在屏幕上时,有移动,且移动范围大于3像素,则无效
-			if (dx>this.limit || dy>this.limit){
-				this.enabled=false;
-			}			
+				// 如果手指按在屏幕上时,有移动,且移动范围大于3像素,则无效
+				if (dx>this.limit || dy>this.limit){
+					this.enabled=false;
+				}			
+			}
 		},
 
 		end : function(touchWrappers,event,touchController){
