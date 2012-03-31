@@ -38,7 +38,7 @@
 				var pageX=touchWrapper.pageX;
 				var pageY=touchWrapper.pageY;
 
-				// 有前一次tap 且 前一次tap的结束事件,点击位置在允许的范围内
+				// 有前一次tap 且 前一次tap的结束时间&点击位置在允许的范围内
 				if (this.prevTap
 					&& endTime-this.prevTap.endTime<=this.delay
 					&& Math.abs(pageX-this.prevTap.pageX)<=this.limit
