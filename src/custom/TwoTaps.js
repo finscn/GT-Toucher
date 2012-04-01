@@ -40,7 +40,6 @@
 			}else{
 				this.anotherTap=null;
 			}
-			console.log(["end-end",this.anotherTap ] );
 		},
 
 		/* Implement by user */
