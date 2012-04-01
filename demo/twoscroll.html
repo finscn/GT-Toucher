@@ -22,35 +22,38 @@
 <script src="../src/TouchWrapper.js"></script>
 <script src="../src/Listener.js"></script>
 
-<script src="../src/custom/Tap.js"></script>
-<script src="../src/custom/DoubleTap.js"></script>
+<script src="../src/custom/TwoScroll.js"></script>
 
 
 <script>
 
 
-
 window.onload=function(){
+
+	createGrid();
+
 	initToucher();
 }
 
 //创建一个tap listener的实例
-var testTouch=new Toucher.DoubleTap({
+var testTouch=new Toucher.TwoScroll({
 
 	isTrigger : function(touchWrapper,wrapperList,touchCoontroller){
-		// 只有点击了 id==tap_area 的dom对象,才会触发这个事件
-		// 条件可以是任意,不仅仅局限于dom的判断, 例如可以是点击的区域坐标 时间等等,
-		// 甚至可以和点击事件无关
-		return touchWrapper.target.id=="tap_area";
+		return touchWrapper.target==grid || touchWrapper.target==gridBox;
 	},
 
-	onTap : function(touchWrappers,event,touchController){
+	onScroll : function(touchWrappers,event,touchController){
 		// tap事件要执行的动作
 		var touchWrapper=touchWrappers[0];
-		var tapX=touchWrapper.startPageX;
-		var tapY=touchWrapper.startPageY;
-		var endTime=touchWrapper.endTime;
-		$id("info").innerHTML="Double Tap pos ["+tapX+","+tapY+"], tap time:"+endTime;
+		var dx=touchWrapper.pageX-touchWrapper.lastPageX;
+		var dy=touchWrapper.pageY-touchWrapper.lastPageY;
+
+		grid.x=grid.x+dx;
+		grid.y=grid.y+dy;
+
+		setDomPos( grid, grid.x, grid.y );
+		
+
 	}
 });
 
@@ -69,8 +72,57 @@ function initToucher(){
 	controller.addListener(testTouch);
 }
 
+
+var grid,gridBox;
+function createGrid(){
+
+	var canvas=document.createElement("canvas");
+	canvas.width=160;
+	canvas.height=100;
+	var ctx=canvas.getContext("2d");
+
+	ctx.fillRect(10,10,canvas.width-20,canvas.height-20);
+	var dataUrl=canvas.toDataURL();
+
+	gridBox=document.createElement("div");
+	gridBox.style.position="relative";
+	gridBox.style.overflow="hidden";
+	gridBox.style.backgroundColor="white" ;
+	gridBox.style.width="300px";
+	gridBox.style.height="300px";
+
+	grid=document.createElement("div");
+	var style={
+		position : "absolute",
+		
+		backgroundImage : "url("+dataUrl+")",
+		top : "0px",
+		left : "0px",
+		width : "2000px",
+		height : "2000px"
+	}
+
+	for (var p in style){
+		grid.style[p]=style[p];
+	}
+
+	grid.x=0;
+	grid.y=0;
+
+	gridBox.appendChild( grid );
+	document.body.appendChild( gridBox );
+
+
+
+
+}
+
 	</script>
 <style>
+body : {
+	overflow: hidden;
+
+}
 #tap_area {
 	width : 200px;
 	height : 100px;
@@ -85,7 +137,7 @@ function initToucher(){
 <body >
 <div id="info">info</div>
 
-<div id="tap_area"> please double-tap me </div>
+
 </body>
 
 </html>

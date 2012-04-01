@@ -7,7 +7,8 @@
 		lag : 100,
 
 		anotherTap : null ,
-
+		
+		start : null ,
 		end : function(wrapperList,event,touchController){
 			
 			var touchWrapper=wrapperList[0];

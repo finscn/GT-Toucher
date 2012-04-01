@@ -16,6 +16,8 @@
 	
 <link href="demo.css" rel="stylesheet" charset="utf-8" />
 
+<script src="./demo.js"></script>
+
 <script src="../src/Controller.js"></script>
 <script src="../src/TouchWrapper.js"></script>
 <script src="../src/Listener.js"></script>
@@ -28,22 +30,13 @@
 
 
 
-
-function setDomPos(dom,x,y){
-	dom.style.webkitTransform="translate3d("+ x+"px,"+y+"px,0px)";
-}
-
-function $id(id){
-	return document.getElementById(id);
-}
-
 window.onload=function(){
 	initToucher();
 }
 
 var count=0;
 //创建一个tap listener的实例
-var testTap=new Toucher.TwoTap({
+var testTouch=new Toucher.TwoTap({
 
 	isTrigger : function(touchWrapper,wrapperList,touchCoontroller){
 		// 只有点击了 id==tap_area 的dom对象,才会触发这个事件
@@ -74,7 +67,7 @@ function initToucher(){
 	controller.init();
 
 	//把自定义事件注册到controller里
-	controller.addListener(testTap);
+	controller.addListener(testTouch);
 }
 
 	</script>

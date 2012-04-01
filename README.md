@@ -86,7 +86,7 @@ GT-Toucher 是对支持多点触控的浏览器(目前只测试了 iOS safari)�
 如何使用: (以下只是代码片段,详见demo源码)
 
 	//创建一个tap listener的实例	
-	var testTap=new Toucher.Tap({
+	var testTouch=new Toucher.Tap({
 
 		isTrigger : function(touchWrapper,wrapperList,touchCoontroller){
 			// 只有点击了 id==tap_area 的dom对象,才会触发这个事件
@@ -106,7 +106,7 @@ GT-Toucher 是对支持多点触控的浏览器(目前只测试了 iOS safari)�
 	});
 	
 	//把自定义事件注册到controller里
-	controller.addListener(testTap);
+	controller.addListener(testTouch);
 	
 
 
