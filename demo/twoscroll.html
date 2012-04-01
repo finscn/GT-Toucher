@@ -45,14 +45,23 @@ var testTouch=new Toucher.TwoScroll({
 	onScroll : function(touchWrappers,event,touchController){
 		// tap事件要执行的动作
 		var touchWrapper=touchWrappers[0];
+		var touchWrapper2=touchWrappers[1];
 		var dx=touchWrapper.pageX-touchWrapper.lastPageX;
 		var dy=touchWrapper.pageY-touchWrapper.lastPageY;
+		var w=Math.abs(touchWrapper.pageX-touchWrapper2.pageX);
+		var h=Math.abs(touchWrapper.pageY-touchWrapper2.pageY);
 
-		grid.x=grid.x+dx;
-		grid.y=grid.y+dy;
+		if (w<250 && h<250){
+			var x=grid.x+dx;
+			var y=grid.y+dy;
 
-		setDomPos( grid, grid.x, grid.y );
-		
+			x=Math.min(0, Math.max(gridBox.w-gridSize,x ));
+			y=Math.min(0, Math.max(gridBox.h-gridSize,y ));
+			grid.x=x;
+			grid.y=y;
+
+			setDomPos( grid, grid.x, grid.y );
+		}
 
 	}
 });
@@ -61,7 +70,8 @@ var testTouch=new Toucher.TwoScroll({
 var controller=new Toucher.Controller({
 	beforeInit : function(){
 		this.dom=document.body;
-	}
+	},
+	preventDefaultMove :true
 });
 
 
@@ -74,22 +84,29 @@ function initToucher(){
 
 
 var grid,gridBox;
+var gridSize=2000;
 function createGrid(){
 
+
 	var canvas=document.createElement("canvas");
-	canvas.width=160;
+	canvas.width=125;
 	canvas.height=100;
 	var ctx=canvas.getContext("2d");
 
-	ctx.fillRect(10,10,canvas.width-20,canvas.height-20);
+	ctx.strokeRect(10,10,canvas.width-20,canvas.height-20);
 	var dataUrl=canvas.toDataURL();
 
 	gridBox=document.createElement("div");
+	gridBox.style.border="solid 1px red"
 	gridBox.style.position="relative";
 	gridBox.style.overflow="hidden";
 	gridBox.style.backgroundColor="white" ;
-	gridBox.style.width="300px";
-	gridBox.style.height="300px";
+
+	gridBox.w=window.innerWidth-20;
+	gridBox.h=window.innerHeight-20;
+
+	gridBox.style.width= gridBox.w+"px";
+	gridBox.style.height=gridBox.h+"px";
 
 	grid=document.createElement("div");
 	var style={
@@ -98,8 +115,8 @@ function createGrid(){
 		backgroundImage : "url("+dataUrl+")",
 		top : "0px",
 		left : "0px",
-		width : "2000px",
-		height : "2000px"
+		width : gridSize+"px",
+		height : gridSize+"px"
 	}
 
 	for (var p in style){
@@ -123,15 +140,7 @@ body : {
 	overflow: hidden;
 
 }
-#tap_area {
-	width : 200px;
-	height : 100px;
-	padding : 10px;
-	margin : 30px;
-	background-color : white;
-	border : 1px solid blue;
-	color : black;
-}
+
 </style>
 </head>
 <body >
