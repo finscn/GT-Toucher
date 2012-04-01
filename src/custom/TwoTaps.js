@@ -4,58 +4,43 @@
 		delay : 800 ,
 		limit : 5,
 
-		lag : 80,
+		lag : 100,
 
 		anotherTap : null ,
 
-		start : function(wrapperList,event,touchController){
-			var touchCount=wrapperList.length;
-			this.enabled= 0<touchCount && touchCount<3;
-		},
-		 
-		move : function(wrapperList,event,touchController){
-			var touchCount=wrapperList.length;
-			this.enabled= 0<touchCount && touchCount<3;
-		},
-
 		end : function(wrapperList,event,touchController){
-			if (wrapperList.length===2){
-				this.onTap(wrapperList,event,touchController);
-				this.anotherTap=null;
-				this.enabled=false;
+			
+			var touchWrapper=wrapperList[0];
+			var enabled= this.checkMoveArea(touchWrapper) &&  this.checkEndTime(touchWrapper);
+
+			if (wrapperList.length==2){
+				var touchWrapper2=wrapperList[1];
+				var enabled2= this.checkMoveArea(touchWrapper2) &&  this.checkEndTime(touchWrapper2);
+				if ( enabled && enabled2 ){
+					this.onTap(wrapperList,event,touchController);
+					this.anotherTap=null;
+				}
 				return;
 			}
 
-			console.log("end 1 "+[this.enabled,this.anotherTap])
-
-			var touchWrapper=wrapperList[0];
-
-			if (this.enabled){
-				//在屏幕上的手指是否在指定时间内抬起,太迟了会视为无效tap
-				if ( this.checkEndTime(touchWrapper) ){
-					var startTime=touchWrapper.startTime;
-					if (this.anotherTap){
-						if (startTime-this.anotherTap.startTime<=this.lag ){
-							this.onTap(wrapperList,event,touchController);
-							this.anotherTap=null;
-							this.enabled=false;
-							return;
-						}else{
-							this.anotherTap.startTime=startTime;
-						}
-					}else{
-						// 没有前一次tap的话, 则创建,并记录此次tap的相关信息
-						this.anotherTap={
-							startTime : startTime
-						}
+			if (enabled && wrapperList.length==1){
+				var startTime=touchWrapper.startTime;
+				if (this.anotherTap){
+					if (startTime-this.anotherTap.startTime<=this.lag ){
+						this.onTap(wrapperList,event,touchController);
+						this.anotherTap=null;
+						return;
 					}
+					this.anotherTap.startTime=startTime;
 				}else{
-					this.anotherTap=null;
-				}			
+					this.anotherTap={
+						startTime : startTime
+					}
+				}
 			}else{
 				this.anotherTap=null;
 			}
-			this.enabled=false;
+			console.log(["end-end",this.anotherTap ] );
 		},
 
 		/* Implement by user */

@@ -27,6 +27,8 @@
 <script>
 
 
+
+
 function setDomPos(dom,x,y){
 	dom.style.webkitTransform="translate3d("+ x+"px,"+y+"px,0px)";
 }
@@ -39,6 +41,7 @@ window.onload=function(){
 	initToucher();
 }
 
+var count=0;
 //创建一个tap listener的实例
 var testTap=new Toucher.TwoTaps({
 
@@ -55,7 +58,7 @@ var testTap=new Toucher.TwoTaps({
 		var tapX=touchWrapper.startPageX;
 		var tapY=touchWrapper.startPageY;
 		var endTime=touchWrapper.endTime;
-		$id("info").innerHTML="Double Tap pos ["+tapX+","+tapY+"], tap time:"+endTime;
+		$id("info").innerHTML=(count++)+"Double Tap pos ["+tapX+","+tapY+"], tap time:"+endTime;
 	}
 });
 
