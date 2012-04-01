@@ -1,5 +1,5 @@
 
-	Toucher.TwoTaps=Toucher.Tap.extend({
+	Toucher.TwoTap=Toucher.Tap.extend({
 
 		delay : 800 ,
 		limit : 5,

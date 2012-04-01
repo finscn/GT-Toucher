@@ -21,7 +21,7 @@
 <script src="../src/Listener.js"></script>
 
 <script src="../src/custom/Tap.js"></script>
-<script src="../src/custom/TwoTaps.js"></script>
+<script src="../src/custom/TwoTap.js"></script>
 
 
 <script>
@@ -43,7 +43,7 @@ window.onload=function(){
 
 var count=0;
 //创建一个tap listener的实例
-var testTap=new Toucher.TwoTaps({
+var testTap=new Toucher.TwoTap({
 
 	isTrigger : function(touchWrapper,wrapperList,touchCoontroller){
 		// 只有点击了 id==tap_area 的dom对象,才会触发这个事件
