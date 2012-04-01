@@ -34,7 +34,10 @@
 					this.anotherTap.startTime=startTime;
 				}else{
 					this.anotherTap={
-						startTime : startTime
+						startTime : startTime,
+						endTime : touchWrapper.endTime,
+						pageX : touchWrapper.pageX ,
+						pageY : touchWrapper.pageY 
 					}
 				}
 			}else{
