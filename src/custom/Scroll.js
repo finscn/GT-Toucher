@@ -1,5 +1,5 @@
 
-	Toucher.TwoScroll=Toucher.Listener.extend({
+	Toucher.Scroll=Toucher.Listener.extend({
 
 		delay : 800 ,
 		limit : 5,
@@ -9,8 +9,10 @@
 		x : 0,
 		y : 0,
 
+		touchCount : 1 ,
+
 		move : function(wrapperList,event,touchController){
-			if (wrapperList.length==2){
+			if (wrapperList.length==this.touchCount){
 				this.onScroll(wrapperList,event,touchController);
 				event.preventDefault();
 			}

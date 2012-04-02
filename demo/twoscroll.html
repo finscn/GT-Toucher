@@ -22,7 +22,7 @@
 <script src="../src/TouchWrapper.js"></script>
 <script src="../src/Listener.js"></script>
 
-<script src="../src/custom/TwoScroll.js"></script>
+<script src="../src/custom/Scroll.js"></script>
 
 
 <script>
@@ -36,7 +36,9 @@ window.onload=function(){
 }
 
 //创建一个tap listener的实例
-var testTouch=new Toucher.TwoScroll({
+var testTouch=new Toucher.Scroll({
+
+	touchCount : 2 ,
 
 	isTrigger : function(touchWrapper,wrapperList,touchCoontroller){
 		return touchWrapper.target==grid || touchWrapper.target==gridBox;
