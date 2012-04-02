@@ -11,11 +11,16 @@ body  {
 	background-color : #333;
 	color : #eeeeee;
 
-	-webkit-user-select : none ;
+	user-select : none ;
+	touch-callout : none ;
+	user-drag : none ;
+	tap-highlight-color : rgba(0,0,0,0) ;
+
+/*	-webkit-user-select : none ;
 	-webkit-touch-callout : none ;
 	-webkit-user-drag : none ;
 	-webkit-tap-highlight-color : rgba(0,0,0,0) ;
-
+*/
 }
 
 #info {
@@ -26,4 +31,5 @@ body  {
 	border : 1px solid while;
 	top :2px;
 	left : 2px;
+	z-index : 99;
 }
