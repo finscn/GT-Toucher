@@ -22,7 +22,7 @@
 <script src="../src/TouchWrapper.js"></script>
 <script src="../src/Listener.js"></script>
 
-<script src="../src/custom/Scale.js"></script>
+<script src="../src/custom/Rotate.js"></script>
 
 
 <script>
@@ -34,20 +34,20 @@ window.onload=function(){
 	initToucher();
 }
 
-var gridScale=1;
-var scale=1;
+var gridRotation=0;
+var rotation=0;
 //创建一个tap listener的实例
-var testTouch=new Toucher.Scale({
+var testTouch=new Toucher.Rotate({
 
 	isTrigger : function(touchWrapper,wrapperList,touchCoontroller){
 		return touchWrapper.target==grid || touchWrapper.target==gridBox;
 	},
 
-	onScale : function(_scale,touchWrappers,event,touchController){
+	onRotate : function(_rotation,touchWrappers,event,touchController){
 		var fix=40;
-		scale=Math.floor(_scale*fix)/fix;
-		$id("info").innerHTML=scale;
-		grid.style.webkitTransform="scale("+gridScale*scale+")";
+		rotation=Math.floor(_rotation*fix)/fix;
+		$id("info").innerHTML=rotation;
+		grid.style.webkitTransform="rotate("+(gridRotation+rotation)+"rad)";
 	},
 	start : function(touchWrappers,event,touchController){
 		//TODO 
@@ -57,7 +57,8 @@ var testTouch=new Toucher.Scale({
 		grid.style.webkitTransformOrigin= x+"px "+y+"px";
 	},
 	end : function(){
-		gridScale=gridScale*scale;
+		gridRotation=gridRotation+rotation;
+
 	}
 });
 
