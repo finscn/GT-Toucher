@@ -45,9 +45,13 @@ var testTouch=new Toucher.Scale({
 
 	onScale : function(_scale,touchWrappers,event,touchController){
 		var fix=40;
-		scale=Math.floor(_scale*fix)/fix;
-		$id("info").innerHTML=scale;
-		grid.style.webkitTransform="scale("+gridScale*scale+")";
+		var offset=0.33;
+		if ( Math.abs(_scale-1)>offset ){
+		_scale=_scale<1?_scale+offset:_scale>1?_scale-offset:_scale;
+			scale=Math.floor(_scale*fix)/fix;
+			$id("info").innerHTML=scale;
+			grid.style.webkitTransform="scale("+gridScale*scale+")";
+		}
 	},
 	start : function(touchWrappers,event,touchController){
 		//TODO 
