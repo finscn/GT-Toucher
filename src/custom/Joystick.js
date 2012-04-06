@@ -23,7 +23,7 @@ Toucher.Joystick=Toucher.Listener.extend({
 		this.moveY=y;
 		this.moveDistance=r;
 		this.rotation=rad*this.RAD_TO_DEG;
-		if ( this.touching && (x || y) ){
+		if ( this.touching && (dx || dy) ){
 			this.onMove(wrapperList,event,touchController);
 		}
 	},
