@@ -113,21 +113,21 @@ Controller.prototype={
 	start : function(event){
 
 		var wrapperList=this.getStartWrapperList(event);
-		this._fire("start",wrapperList);
+		this._fire("start",wrapperList,event);
 
 	},
 	move : function(event){
 
 		var wrapperList=this.getMoveWrapperList(event);
 
-		this._fire("move",wrapperList);
+		this._fire("move",wrapperList,event);
 
 	},
 	end : function(event){
 
 		var wrapperList=this.getEndWrapperList(event);
 
-		this._fire("end",wrapperList);
+		this._fire("end",wrapperList,event);
 
 	},
 
@@ -215,7 +215,7 @@ Controller.prototype={
 		return endWrapperList;
 	},
 
-	_fire : function(type,wrapperList){
+	_fire : function(type,wrapperList,event){
 
 		var touchLast=wrapperList.length-1;
 

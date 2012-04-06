@@ -42,10 +42,9 @@ Toucher.Joystick=Toucher.Listener.extend({
 	/* Implement by user */
 	onMove : function(wrapperList,event,touchController){
 	
-		
 	},
+	/* Implement by user */
 	onEnd : function(wrapperList,event,touchController){
-	
 		
 	}
 
