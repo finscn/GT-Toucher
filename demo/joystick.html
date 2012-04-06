@@ -101,7 +101,8 @@ var testTouch=new Toucher.Joystick({
 var controller=new Toucher.Controller({
 	beforeInit : function(){
 		this.dom=document.body;
-	}
+	},
+	preventDefaultMove :true
 });
 
 
