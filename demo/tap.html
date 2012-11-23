@@ -35,19 +35,19 @@ window.onload=function(){
 //创建一个tap listener的实例
 var testTouch=new Toucher.Tap({
 
-	isTrigger : function(touchWrapper,wrapperList,touchCoontroller){
+	wrapperFilter : function(wrapper,wrappers,controller){
 		// 只有点击了 id==tap_area 的dom对象,才会触发这个事件
 		// 条件可以是任意,不仅仅局限于dom的判断, 例如可以是点击的区域坐标 时间等等,
 		// 甚至可以和点击事件无关
-		return touchWrapper.target.id=="tap_area";
+		return wrapper.target.id=="tap_area";
 	},
 
-	onTap : function(touchWrappers,event,touchController){
+	onTap : function(wrappers,event,controller){
 		// tap事件要执行的动作
-		var touchWrapper=touchWrappers[0];
-		var tapX=touchWrapper.startPageX;
-		var tapY=touchWrapper.startPageY;
-		var endTime=touchWrapper.endTime;
+		var wrapper=wrappers[0];
+		var tapX=wrapper.startPageX;
+		var tapY=wrapper.startPageY;
+		var endTime=wrapper.endTime;
 		$id("info").innerHTML="Tap pos ["+tapX+","+tapY+"], tap time:"+endTime;
 	}
 });

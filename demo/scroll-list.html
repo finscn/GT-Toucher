@@ -22,46 +22,114 @@
 <script src="../src/TouchWrapper.js"></script>
 <script src="../src/Listener.js"></script>
 
-<script src="../src/custom/Rotate.js"></script>
+<script src="../src/custom/Scroll.js"></script>
 
+<style>
+body : {
+	overflow: hidden;
 
+}
+
+</style>
 <script>
 
 
 window.onload=function(){
 
 	createGrid();
+
 	initToucher();
 }
 
-var gridRotation=0;
-var rotation=0;
+
 //创建一个tap listener的实例
-var testTouch=new Toucher.Rotate({
+var testTouch=new Toucher.Scroll({
+
+	touchCount : 1 ,
 
 	wrapperFilter : function(touchWrapper,wrappers,controller){
-		return touchWrapper.target==grid || touchWrapper.target==gridBox;
+		var t=touchWrapper.target;
+		var v= t==grid 
+			|| t==table 
+			|| t.parentNode.parentNode==table
+			|| t==gridBox;
+
+		if (v){
+			clearTimeout(current);
+
+		}
+		return v
 	},
 
-	onRotate : function(_rotation,touchWrappers,event,controller){
-		var fix=40;
-		rotation=Math.floor(_rotation*fix)/fix;
-		$id("info").innerHTML=rotation;
-		grid.style.webkitTransform="rotate("+(gridRotation+rotation)+"rad)";
-	},
-	start : function(touchWrappers,event,controller){
-		//TODO 
-		var wrapperTouch=touchWrappers[0];
-		var x=wrapperTouch.startPageX;
-		var y=wrapperTouch.startPageY;
-		grid.style.webkitTransformOrigin= x+"px "+y+"px";
-	},
-	end : function(){
-		gridRotation=gridRotation+rotation;
+	onScroll : function(touchWrappers,event,controller){
+		// tap事件要执行的动作
+		var touchWrapper=touchWrappers[0];
+		
+		var dy=touchWrapper.pageY-touchWrapper.lastPageY;
+		
+			var y=grid.y+dy;
 
-	}
+			grid.y=y;
+
+			setDomPos( grid, 0, grid.y );
+
+	},
+
+	end : function(touchWrappers, event, controller){ 
+		var touchWrapper=touchWrappers[0];
+		var time=touchWrapper.endTime-touchWrapper.startTime;
+		var distance=touchWrapper.endPageY-touchWrapper.startPageY;
+		var speed=distance/time;
+		if (Math.abs(speed)>0.5){
+			startScroll(grid,speed);
+		}
+	} 
 });
 
+var current=null
+function startScroll(grid,speed){
+	var up=speed<0;
+
+	var acc=up?0.001:-0.001;
+
+	var y=grid.y;
+	clearTimeout(current)
+	speed=speed*1;
+
+	function run(){
+
+		var deltaTime=20;
+
+		var lastSpeed=speed;
+
+		speed=speed + acc * deltaTime;
+
+		if (speed*lastSpeed<=0){
+			return;
+		}
+
+		var dy=(lastSpeed + speed) * deltaTime / 2 ;	
+
+		y=y+dy;
+
+		if (y>10){
+			y=0;
+		}
+
+		setDomPos( grid, 0, y );
+		grid.y=y;
+
+
+		current=setTimeout(run,20);
+
+
+		
+
+	}
+
+	run()
+
+}
 
 var controller=new Toucher.Controller({
 	beforeInit : function(){
@@ -79,7 +147,7 @@ function initToucher(){
 }
 
 
-var grid,gridBox;
+var table, grid,gridBox;
 var gridSize=2000;
 function createGrid(){
 
@@ -108,16 +176,33 @@ function createGrid(){
 	var style={
 		position : "absolute",
 		
-		backgroundImage : "url("+dataUrl+")",
+		//backgroundImage : "url("+dataUrl+")",
 		top : "0px",
 		left : "0px",
-		width : gridSize+"px",
-		height : gridSize+"px"
+		width : "100%"
+		//width : gridSize+"px",
+		//height : gridSize+"px"
 	}
 
 	for (var p in style){
 		grid.style[p]=style[p];
 	}
+
+	table=document.createElement("table");
+	table.width="100%"
+	table.style.width="100%"
+	for (var i=0;i<300;i++){
+		var tr=document.createElement("tr");
+		var td=document.createElement("td");
+		tr.appendChild( td );
+		td.innerHTML=i+" test test test ";
+		td.style.fontSize="24pt"
+		td.style.padding="5pt"
+		td.style.borderBottom="1px solid #666666"
+		td.style.color="black"
+		table.appendChild(tr);
+	}
+	grid.appendChild(table)
 
 	grid.x=0;
 	grid.y=0;
@@ -131,13 +216,7 @@ function createGrid(){
 }
 
 	</script>
-<style>
-body : {
-	overflow: hidden;
 
-}
-
-</style>
 </head>
 <body >
 <div id="info">info</div>

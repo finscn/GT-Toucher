@@ -23,7 +23,6 @@ Controller.prototype={
 	host : window ,
 	dom : document,
 
-	useMouse : false ,
 	supportMultiTouch : false , 
 
 	useCapture : true ,
@@ -37,10 +36,25 @@ Controller.prototype={
 	offsetLeft : 0 ,
 	offsetTop : 0 ,
 
+	touchLag : 30,
+	maxTouch : 5,
+	startTouches : null,
+	moveTouches : null,
+	endTouches : null,
+
 	beforeInit : function(){},
 	init : function(){
 
 		this.listenerList=[];
+
+		this.startTouches=[];
+		this.moveTouches=[];
+		this.endTouches=[];
+
+		this.startTouches.lastTime
+			=this.moveTouches.lastTime
+			=this.endTouches.lastTime=0;
+
 		this.touched={};
 		this.touchedCount=0;
 
@@ -48,8 +62,10 @@ Controller.prototype={
 
 		var dom=this.dom;
 		this.updateOffset(dom);
+
 		if (!("ontouchstart" in this.dom)){
 			this.useMouse=true;
+			this.supportMultiTouch=false;
 		}
 
 		if ( this.useMouse ){
@@ -66,21 +82,21 @@ Controller.prototype={
 
 		var Me=this;
 		dom.addEventListener(CONST.START, function(event){			
-			Me.start(event);
+			Me.onStart(event);
 			if (Me.preventDefaultStart || Me.preventDefault){
 				event.preventDefault();
 			}
 		}, this.useCapture );
 
 		dom.addEventListener(CONST.MOVE, function(event){
-			Me.move(event);	
+			Me.onMove(event);	
 			if (Me.preventDefaultMove|| Me.preventDefault){
 				event.preventDefault();
 			}		
 		}, this.useCapture );
 
 		dom.addEventListener(CONST.END, function(event){
-			Me.end(event);
+			Me.onEnd(event);
 			if (Me.preventDefaultEnd|| Me.preventDefault){
 				event.preventDefault();
 			} 			
@@ -109,136 +125,173 @@ Controller.prototype={
 	},
 
 
+	onStart : function(event){
 
-	start : function(event){
+		var wrappers=this.getStartWrappers(event);
+		this._emit("start",wrappers,event);
 
-		var wrapperList=this.getStartWrapperList(event);
-		this._fire("start",wrapperList,event);
-
-	},
-	move : function(event){
-
-		var wrapperList=this.getMoveWrapperList(event);
-
-		this._fire("move",wrapperList,event);
 
 	},
-	end : function(event){
+	onMove : function(event){
 
-		var wrapperList=this.getEndWrapperList(event);
+		var wrappers=this.getMoveWrappers(event);
 
-		this._fire("end",wrapperList,event);
+		this._emit("move",wrappers,event);
+
+	},
+	onEnd : function(event){
+
+		var wrappers=this.getEndWrappers(event);
+
+		this._emit("end",wrappers,event);
+
 
 	},
 
-	getStartWrapperList : function(event){	
-		var startWrapperList=[];
+	addTouches : function(queue,item){
+		if (queue.length>=this.maxTouch){
+			queue.shift();
+		}
+		queue.push(item);
+	},
+	removeFromTouches : function(queue,item){
+		if (queue.length>=this.maxTouch){
+			queue.shift();
+		}
+		queue.push(item);
+	},
+
+	getStartWrappers : function(event){	
+		var _now=Date.now();
 		var changedList=event[CONST.changedTouches]||[event];
+
+		var startWrappers=[];
 		for (var i=changedList.length-1;i>=0;i--){
 			var touch=changedList[i];
 			var touchId=touch.identifier||CONST.defaultTouchId;
 
 			var touchWrapper=this.touched[touchId];
 
-			if ( !touchWrapper){
-				touchWrapper=new NS.TouchWrapper(touch,event);
-				touchWrapper.onStart(touch);			
-				this.touched[ touchId ]=touchWrapper;
-				this.touchedCount++;	
-				startWrapperList.push(touchWrapper);
-			}else if (this.useMouse){
-				touchWrapper.onStart(touch);
-				this.touchedCount=1;
-				startWrapperList.push(touchWrapper);
+			touchWrapper=new NS.TouchWrapper(touchId);
+			this.touched[ touchId ]=touchWrapper;
+			this.touchedCount++;	
+			touchWrapper.start(touch,event);			
+			startWrappers.push(touchWrapper);
+
+			var _touches=this.startTouches;
+			if (_now-_touches.lastTime>this.touchLag){
+				_touches.length=0;
 			}
+			_touches.lastTime=_now;
+			_touches.push(touchWrapper);
 		}			
-		return startWrapperList;
+		return startWrappers;
 	},
 
-	getMoveWrapperList : function(event){	
-		var moveWrapperList=[];
+	getMoveWrappers : function(event){	
+		var _now=Date.now();
 		var changedList=event[CONST.changedTouches]||[event];
+
+		var moveWrappers=[];
+
 		for (var i=changedList.length-1;i>=0;i--){
 			var touch=changedList[i];
 			var touchId=touch.identifier||CONST.defaultTouchId;
 
 			var touchWrapper=this.touched[touchId];
-			if (!touchWrapper && this.useMouse){
-				touchWrapper=new NS.TouchWrapper(touch,event);
-				touchWrapper.onStart(touch);	
-				touchWrapper.touching=false;		
-				this.touched[ touchId ]=touchWrapper;
-			}
+
 			if ( touchWrapper ){
-				touchWrapper.onMove(touch);
-				moveWrapperList.push(touchWrapper);		
+
+				if (!touchWrapper.moveTime){
+					var _touches=this.moveTouches;
+					if (_now-_touches.lastTime>this.touchLag){
+						_touches.length=0;
+					}
+					_touches.lastTime=_now;
+					_touches.push(touchWrapper);
+				}
+
+				touchWrapper.move(touch,event);
+				moveWrappers.push(touchWrapper);	
+				
 			}
 		}
-		return moveWrapperList;
+		return moveWrappers;
 	},
 
-	getEndWrapperList : function(event){	
-		var endWrapperList=[];
-
+	getEndWrappers : function(event){	
+		var _now=Date.now();
 		var changedList=event[CONST.changedTouches]||[event];
-		
-		var touched;
+	
+	
+		var _touched={};
 		if (!this.useMouse){
-			touched={};
-			var touchedList=event[CONST.touches];
-			for (var j=touchedList.length-1;j>=0;j--){
-				var t=touchedList[j];
-				touched[t.identifier]=true;
+			var _touchedList=event[CONST.touches];
+			for (var j=_touchedList.length-1;j>=0;j--){
+				var t=_touchedList[j];
+				_touched[t.identifier]=true;
 			}
 		}
+
+		var endWrappers=[];
 		for (var i=changedList.length-1;i>=0;i--){
 			var touch=changedList[i];
 			var touchId=touch.identifier||CONST.defaultTouchId;
 
-			var isEnd=this.useMouse || !touched[touchId];
-
-			if (isEnd){
+			if ( !_touched[touchId]){
 				var touchWrapper=this.touched[touchId];
 				if ( touchWrapper ){
-					touchWrapper.onEnd(touch);
-					if (!this.useMouse){
-						delete this.touched[touchId];
-						this.touchedCount--;
-					}else{
-						this.touchedCount=0;
+					touchWrapper.end(touch);
+					
+					delete this.touched[touchId];
+					this.touchedCount--;
+					
+					endWrappers.push(touchWrapper);
+
+					var _touches=this.endTouches;
+					if (_now-_touches.lastTime>this.touchLag){
+						_touches.length=0;
 					}
-					endWrapperList.push(touchWrapper);
+					_touches.lastTime=_now;
+					_touches.push(touchWrapper);
+					this.removeWrapper(this.startTouches,touchId);
+					this.removeWrapper(this.moveTouches,touchId);
 				}
 			}
 		}
 
-		return endWrapperList;
+		return endWrappers;
 	},
 
-	_fire : function(type,wrapperList,event){
+	removeWrapper : function(list,id){
+		for (var i=list.length-1;i>=0;i--){
+			if (list[i].identifier==id){
+				list.splice(i, 1);
+				return id;
+			}
+		}
+		return false;
+	},
+	_emit : function(type,wrappers,event){
 
-		var touchLast=wrapperList.length-1;
-
+		var wrapperCount=wrappers.length-1;
+		var touchWrapper;
 		for (var i=this.listenerList.length-1;i>=0;i--){
 			var listener=this.listenerList[i];
 			if (listener[type]!=null){
-				var list=[];
-				for (var j=touchLast;j>=0;j--){
-					var touchWrapper=wrapperList[j];
-					if (listener.isTrigger(touchWrapper,wrapperList,this)){
-						list.push(touchWrapper)
+				var validWrappers=[];
+				for (var j=wrapperCount;j>=0;j--){
+					touchWrapper=wrappers[j];
+					if (listener.wrapperFilter(touchWrapper,wrappers,this)){
+						validWrappers.push(touchWrapper)
 					}
 				}
-				if (list.length>0){
-					if (this.useMouse){
-						var touchWrapper=this.touched[CONST.defaultTouchId];
-						listener.touching=touchWrapper.touching;
-					}else{
-						listener.touching=true;
-					}
-					listener[type](list,event,this);
-					touchWrapper.rawTouch=null;
+				if (validWrappers.length>0){
+					listener.touching=true;
+					listener[type](validWrappers,event,this);
 				}
+				// listener.touching=true;
+				// listener[type](wrappers,event,this);
 			}
 		}
 	},
@@ -246,28 +299,34 @@ Controller.prototype={
 
 
 	addListener : function(listener){
+		listener.controller=this;
 		listener.offsetLeft=this.offsetLeft;
 		listener.offsetTop=this.offsetTop;
 		listener.init();
 		this.listenerList.push(listener);
 		// TODO : order by listener.order
+		listener.order=listener.order||0;
 	},
 
 	removeListener : function(listener){
 		for (var i=this.listenerList.length-1;i>=0;i--){
 			if (this.listenerList[i]==listener){
 				this.listenerList.splice(i, 1);
+				listener.controller=null;
 				return listener;
 			}
 		}
 		return null;
+	},
+
+	removeAllListener : function(){
+		for (var i=this.listenerList.length-1;i>=0;i--){
+			listener.controller=null;
+		}
+		this.listenerList.length=0;
 	}
 
 }
-
-
-
-
 
 
 	

@@ -11,20 +11,22 @@
 
 		touchCount : 1 ,
 
-		move : function(wrapperList,event,touchController){
-			if (wrapperList.length==this.touchCount){
-				this.onScroll(wrapperList,event,touchController);
+		move : function(wrappers,event,controller){
+			if (wrappers.length==this.touchCount){
+				this.onScroll(wrappers,event,controller);
 				event.preventDefault();
 			}
-
 		},
+		end : function(wrappers, event, controller){ 
+			
+		} ,
 
 		/* Implement by user */
-		isTrigger : function(touchWrapper,wrapperList,touchController){
+		wrapperFilter : function(touchWrapper,wrappers,controller){
 			return false;
 		},
 		/* Implement by user */
-		onScroll : function(wrapperList,event,touchController){
+		onScroll : function(wrappers,event,controller){
 
 		}
 

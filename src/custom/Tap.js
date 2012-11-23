@@ -5,7 +5,7 @@
 
 	Toucher.Tap=Toucher.Listener.extend({
 
-		delay : 800 ,
+		lag : 800 ,
 		limit : 5,
 
 		enabled : false ,
@@ -18,21 +18,21 @@
 			return dx<=this.limit && dy<=this.limit;
 		},
 		checkEndTime : function(touchWrapper){
-			return (touchWrapper.endTime-touchWrapper.startTime)<=this.delay;
+			return (touchWrapper.endTime-touchWrapper.startTime)<=this.lag;
 		},
 
-		start : function(wrapperList,event,touchController){
+		start : function(wrappers,event, controller){
 			// 只有一根手指时有效
-			this.enabled=wrapperList.length==1;
+			this.enabled=wrappers.length==1;
 		},
 
-		end : function(wrapperList,event,touchController){
+		end : function(wrappers,event, controller){
 
-			if (this.enabled && wrapperList.length===1){
+			if (this.enabled && wrappers.length===1){
 				//在屏幕上的手指是否在指定区域和时间范围内抬起,太迟了会视为无效tap
-				if ( this.checkMoveArea(wrapperList[0]) && this.checkEndTime(wrapperList[0]) ){
+				if ( this.checkMoveArea(wrappers[0]) && this.checkEndTime(wrappers[0]) ){
 					// tap事件要执行的动作
-					this.onTap(wrapperList,event,touchController);
+					this.onTap(wrappers,event, controller);
 				}
 			}
 
@@ -40,13 +40,12 @@
 		},
 
 
-
 		/* Implement by user */
-		isTrigger : function(touchWrapper,wrapperList,touchController){
+		wrapperFilter : function(touchWrapper,wrappers, controller){
 			return false;
 		},
 		/* Implement by user */
-		onTap : function(wrapperList,event,touchController){
+		onTap : function(wrappers,event, controller){
 
 		}
 

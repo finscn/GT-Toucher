@@ -4,72 +4,62 @@
 	var NS=scope.Toucher=scope.Toucher||{};
 	var CONST=NS.CONST=NS.CONST||{};
 
-	var TouchWrapper=NS.TouchWrapper = function(rawTouch,rawEvent){	
-
-		// no use
-		this.rawTouch=rawTouch;
-		this.rawEvent=rawEvent;
-
+	var TouchWrapper=NS.TouchWrapper = function(identifier){	
+		this.identifier=identifier;
 	};
 
 
 	TouchWrapper.prototype={
 
 		constructor : TouchWrapper ,
-		id : null ,
 
-		init : function(){
-
-		},
-
-		onStart : function(rawTouch){
+		start : function(rawTouch,rawEvent){
 
 			this.type=CONST.START;
-			this.rawTouch=rawTouch;
+			
+			this.update(rawTouch,rawEvent);
 
-			this.touching=true;
-		
-			this.onUpdate(rawTouch);
-
-			this.startTime=this.endTime=Date.now();
 			this.startPageX = this.lastPageX=this.pageX;
 			this.startPageY = this.lastPageY=this.pageY;
 			this.startTarget= this.lastTarget=this.target;
 			this.moveAmountX=0;
 			this.moveAmountY=0;
 
+			this.touching=true;
+			this.startTime=this.endTime=Date.now();
+
 		},
 
-		onMove : function(rawTouch){
+		move : function(rawTouch,rawEvent){
 
 			this.type=CONST.MOVE;
-			this.rawTouch=rawTouch;
+			
+			this.update(rawTouch,rawEvent);
 
-			this.onUpdate(rawTouch);
+			this.moveTime=Date.now();
 
 		},
 
-		onEnd : function(rawTouch){
+		end : function(rawTouch,rawEvent){
 				
 			this.type=CONST.END;
-			this.rawTouch=rawTouch;
-
-			this.onUpdate(rawTouch);
+			
+			this.update(rawTouch,rawEvent);
 
 			this.endPageX = this.pageX;
 			this.endPageY = this.pageY;
 			this.endTarget= this.target;
 
 			this.touching=false;
-
 			this.endTime=Date.now();
 
-			
 		},
 
 
-		onUpdate : function(rawTouch){
-
+		update : function(rawTouch,rawEvent){
+			this.rawEvent=rawEvent;
+			this.rawTouch=rawTouch;
+			
 			this.lastPageX=this.pageX;
 			this.lastPageY=this.pageY;
 			this.lastTarget=this.target;
@@ -85,10 +75,6 @@
 
 
 	};
-
-
-
-
 
 
 	

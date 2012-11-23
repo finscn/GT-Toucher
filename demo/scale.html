@@ -39,11 +39,11 @@ var scale=1;
 //创建一个tap listener的实例
 var testTouch=new Toucher.Scale({
 
-	isTrigger : function(touchWrapper,wrapperList,touchCoontroller){
+	wrapperFilter : function(touchWrapper,wrappers,controller){
 		return touchWrapper.target==grid || touchWrapper.target==gridBox;
 	},
 
-	onScale : function(_scale,touchWrappers,event,touchController){
+	onScale : function(_scale,touchWrappers,event,controller){
 		var fix=40;
 		var offset=0.33;
 		if ( Math.abs(_scale-1)>offset ){
@@ -53,7 +53,7 @@ var testTouch=new Toucher.Scale({
 			grid.style.webkitTransform="scale("+gridScale*scale+")";
 		}
 	},
-	start : function(touchWrappers,event,touchController){
+	start : function(touchWrappers,event,controller){
 		//TODO 
 		var wrapperTouch=touchWrappers[0];
 		var x=wrapperTouch.startPageX;

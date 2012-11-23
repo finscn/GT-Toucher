@@ -58,18 +58,18 @@
 		onInit : function(){},
 
 		/* Implement by user */
-		isTrigger : function(touchWrapper,wrapperList,touchCoontroller){
+		wrapperFilter : function(touchWrapper,wrappers,controller){
 			return false;
 		},
 
 		/* Implement by user */
-		// function(wrapperList, event, touchCoontroller){ } 
+		// function(vaildWrappers, event, controller){ } 
 		start : null , 
 
-		// function(wrapperList, event, touchCoontroller){ } 
+		// function(vaildWrappers, event, controller){ } 
 		move : null ,
 
-		// function(wrapperList, event, touchCoontroller){ } 
+		// function(vaildWrappers, event, controller){ } 
 		end : null 
 
 	};

@@ -7,9 +7,9 @@
 		lag : 100,
 
 
-		move : function(wrapperList,event,touchController){
-			if (wrapperList.length==2){
-				var t1=wrapperList[0], t2=wrapperList[1];
+		move : function(wrappers,event,controller){
+			if (wrappers.length==2){
+				var t1=wrappers[0], t2=wrappers[1];
 				var disX= (t1.startPageX-t2.startPageX);
 				var disY= (t1.startPageY-t2.startPageY);
 				var dis=Math.sqrt(disX*disX+disY*disY);
@@ -19,18 +19,18 @@
 				var newDis=Math.sqrt(disX*disX+disY*disY);
 
 				var scale=newDis/dis;
-				this.onScale(scale,wrapperList,event,touchController);
+				this.onScale(scale,wrappers,event,controller);
 				event.preventDefault();
 			}
 
 		},
 
 		/* Implement by user */
-		isTrigger : function(touchWrapper,wrapperList,touchController){
+		wrapperFilter : function(touchWrapper,wrappers,controller){
 			return false;
 		},
 		/* Implement by user */
-		onScale : function(scale,wrapperList,event,touchController){
+		onScale : function(scale,wrappers,event,controller){
 
 		}
 

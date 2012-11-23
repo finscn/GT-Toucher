@@ -41,11 +41,11 @@ var testTouch=new Toucher.Scroll({
 
 	touchCount : 2 ,
 
-	isTrigger : function(touchWrapper,wrapperList,touchCoontroller){
+	wrapperFilter : function(touchWrapper,wrappers,controller){
 		return touchWrapper.target==grid || touchWrapper.target==gridBox;
 	},
 
-	onScroll : function(touchWrappers,event,touchController){
+	onScroll : function(touchWrappers,event,controller){
 		// tap事件要执行的动作
 		var touchWrapper=touchWrappers[0];
 		var touchWrapper2=touchWrappers[1];

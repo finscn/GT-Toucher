@@ -36,12 +36,12 @@ GT-Toucher 是对支持多点触控的浏览器(目前只测试了 iOS safari)�
 
 		enabled : false ,
 
-		start : function(touchWrappers,event,touchController){
+		start : function(touchWrappers,event,controller){
 			// 只有一根手指时有效
 			this.enabled=touchWrappers.length==1;
 		},
 
-		move : function(touchWrappers,event,touchController){
+		move : function(touchWrappers,event,controller){
 			if (this.enabled){
 				var touchWrapper=touchWrappers[0];
 				var dx=Math.abs(touchWrapper.moveAmountX);
@@ -54,7 +54,7 @@ GT-Toucher 是对支持多点触控的浏览器(目前只测试了 iOS safari)�
 			}
 		},
 
-		end : function(touchWrappers,event,touchController){
+		end : function(touchWrappers,event,controller){
 			var touchWrapper=touchWrappers[0];
 
 			//手指在屏幕上抬起的太迟了, 也无效
@@ -64,18 +64,18 @@ GT-Toucher 是对支持多点触控的浏览器(目前只测试了 iOS safari)�
 
 			if (this.enabled){
 				// tap事件要执行的动作
-				this.onTap(touchWrappers,event,touchController);
+				this.onTap(touchWrappers,event,controller);
 			}
 
 			this.enabled=false;
 		},
 
 		/* Implement by user */
-		isTrigger : function(touchWrapper,wrapperList,touchCoontroller){
+		wrapperFilter : function(touchWrapper,wrappers,controller){
 			return false;
 		},
 		/* Implement by user */
-		onTap : function(touchWrappers,event,touchController){
+		onTap : function(touchWrappers,event,controller){
 
 		}
 
@@ -88,14 +88,14 @@ GT-Toucher 是对支持多点触控的浏览器(目前只测试了 iOS safari)�
 	//创建一个tap listener的实例	
 	var testTouch=new Toucher.Tap({
 
-		isTrigger : function(touchWrapper,wrapperList,touchCoontroller){
+		wrapperFilter : function(touchWrapper,wrappers,controller){
 			// 只有点击了 id==tap_area 的dom对象,才会触发这个事件
 			// 条件可以是任意,不仅仅局限于dom的判断, 例如可以是点击的区域坐标 时间等等,
 			// 甚至可以和点击事件无关
 			return touchWrapper.target.id=="tap_area";
 		},
 
-		onTap : function(touchWrappers,event,touchController){
+		onTap : function(touchWrappers,event,controller){
 			// tap事件要执行的动作
 			var touchWrapper=touchWrappers[0];
 			var tapX=touchWrapper.startPageX;

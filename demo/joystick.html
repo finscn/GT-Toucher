@@ -77,12 +77,12 @@ var testTouch=new Toucher.Joystick({
 
 	maxRadius : soltRadius-10 ,
 
-	isTrigger : function(touchWrapper,wrapperList,touchCoontroller){
+	wrapperFilter : function(touchWrapper,wrappers,controller){
 		return touchWrapper.startTarget.id=="slot1"
 				|| touchWrapper.startTarget.id=="stick1";
 	},
 
-	onMove : function(touchWrappers,event,touchController){
+	onMove : function(touchWrappers,event,controller){
 		var x=this.moveX.toFixed(2), 
 			y=this.moveY.toFixed(2);
 		var distance=this.moveDistance.toFixed(2),
@@ -91,7 +91,7 @@ var testTouch=new Toucher.Joystick({
 		setDomPos(stick1 , x , y);
 		info.innerHTML=" ["+x+","+y+"],"+distance+","+rotation;
 	},
-	onEnd : function(touchWrappers,event,touchController){
+	onEnd : function(touchWrappers,event,controller){
 		setDomPos(stick1 , 0 , 0);
 		info.innerHTML=" ["+0+","+0+"]";
 	}
