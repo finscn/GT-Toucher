@@ -22,6 +22,9 @@
 			this.startPageX = this.lastPageX=this.pageX;
 			this.startPageY = this.lastPageY=this.pageY;
 			this.startTarget= this.lastTarget=this.target;
+
+			this.deltaX=0;
+			this.deltaY=0;
 			this.moveAmountX=0;
 			this.moveAmountY=0;
 
@@ -68,6 +71,8 @@
 			this.pageY=rawTouch.pageY;
 			this.target=rawTouch.target;
 
+			this.deltaX=this.pageX-this.lastPageX;
+			this.deltaY=this.pageY-this.lastPageY;
 			this.moveAmountX = this.pageX - this.startPageX;
 			this.moveAmountY = this.pageY - this.startPageY;
 
