@@ -44,6 +44,9 @@ var testTouch=new Toucher.Rotate({
 	},
 
 	onRotate : function(_rotation,touchWrappers,event,controller){
+		//if (Math.abs(rotation)<0.1){
+		//	return;
+		//}
 		var fix=40;
 		rotation=Math.floor(_rotation*fix)/fix;
 		$id("info").innerHTML=rotation;
@@ -57,6 +60,9 @@ var testTouch=new Toucher.Rotate({
 		grid.style.webkitTransformOrigin= x+"px "+y+"px";
 	},
 	end : function(){
+		//if (Math.abs(rotation)<0.1){
+		//	return;
+		//}
 		gridRotation=gridRotation+rotation;
 
 	}
