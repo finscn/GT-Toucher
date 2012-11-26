@@ -77,7 +77,7 @@ var testTouch=new Toucher.Joystick({
 
 	maxRadius : soltRadius-10 ,
 
-	wrapperFilter : function(touchWrapper,wrappers,controller){
+	filterWrapper : function(touchWrapper,event,controller){
 		return touchWrapper.startTarget.id=="slot1"
 				|| touchWrapper.startTarget.id=="stick1";
 	},

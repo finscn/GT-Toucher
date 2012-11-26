@@ -57,8 +57,20 @@
 		},
 		onInit : function(){},
 
+		filterWrappers : function(wrappers,event,controller){
+			var validWrappers=[];
+			for (var j=wrappers.length-1;j>=0;j--){
+				var touchWrapper=wrappers[j];
+				if (this.filterWrapper(touchWrapper,event,controller)){
+					validWrappers.push(touchWrapper)
+				}
+			}
+			return validWrappers;
+
+		},
+
 		/* Implement by user */
-		wrapperFilter : function(touchWrapper,wrappers,controller){
+		filterWrapper : function(touchWrapper,event,controller){
 			return false;
 		},
 

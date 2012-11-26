@@ -41,7 +41,7 @@ var testTouch=new Toucher.Scroll({
 
 	touchCount : 2 ,
 
-	wrapperFilter : function(touchWrapper,wrappers,controller){
+	filterWrapper : function(touchWrapper,event,controller){
 		return touchWrapper.target==grid || touchWrapper.target==gridBox;
 	},
 

@@ -274,29 +274,18 @@ Controller.prototype={
 	},
 	_emit : function(type,wrappers,event){
 
-		var wrapperCount=wrappers.length-1;
 		var touchWrapper;
 		for (var i=this.listenerList.length-1;i>=0;i--){
 			var listener=this.listenerList[i];
 			if (listener[type]!=null){
-				var validWrappers=[];
-				for (var j=wrapperCount;j>=0;j--){
-					touchWrapper=wrappers[j];
-					if (listener.wrapperFilter(touchWrapper,wrappers,this)){
-						validWrappers.push(touchWrapper)
-					}
-				}
+				var validWrappers=listener.filterWrappers(wrappers,event,this);
 				if (validWrappers.length>0){
 					listener.touching=true;
 					listener[type](validWrappers,event,this);
 				}
-				// listener.touching=true;
-				// listener[type](wrappers,event,this);
 			}
 		}
 	},
-
-
 
 	addListener : function(listener){
 		listener.controller=this;

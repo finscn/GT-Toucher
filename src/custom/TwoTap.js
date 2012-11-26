@@ -45,7 +45,7 @@
 		},
 
 		/* Implement by user */
-		wrapperFilter : function(touchWrapper,wrappers,controller){
+		filterWrapper : function(touchWrapper,event,controller){
 			return false;
 		},
 		/* Implement by user */

@@ -39,7 +39,7 @@ var scale=1;
 //创建一个tap listener的实例
 var testTouch=new Toucher.Scale({
 
-	wrapperFilter : function(touchWrapper,wrappers,controller){
+	filterWrapper : function(touchWrapper,event,controller){
 		return touchWrapper.target==grid || touchWrapper.target==gridBox;
 	},
 
