@@ -12,13 +12,24 @@ GT-Toucher 是对支持多点触控的浏览器(目前只测试了 iOS safari)�
 
 工作原理 : 
 ---------------------
-
 * Controller 在外层元素(通常是document 或 document.body,也可以根据需求自定义)上监听touchstart touchmove touchend事件.
 * 向Controller 上注册自定义Listener实例, Listener实例里定义了该Listener要接收哪些touch事件(规则),以及如何响应这些事件(动作)
 * Controller会记录发生在外层元素上的所有的touch事件的信息,然后根据Listener定义的规则,去触发相应的Listener执行动作.
 * 传递给Listener的touch事件已经经过controller筛选,只传递Listener需要的
 * touch事件不是直接传递给Listener,而是会被包装成TouchWrapper后传递.
 * TouchWrapper里包含了原生的touch对象,同时记录了一些辅助信息(详见源码)
+
+
+为什么不选择传统事件模型 : 
+---------------------
+在传统的dom事件里,开发者通常使用形如下列形式的代码来实现事件的监听
+
+	dom.addEventListener(EventType, callbackFn );
+
+
+* (待补充)
+
+
 
 示例
 -----------------
