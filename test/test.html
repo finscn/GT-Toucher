@@ -39,7 +39,7 @@ function $id(id){
 
 var controller=new Toucher.Controller({
 	beforeInit : function(){
-		this.dom=$id("tap_area");
+		this.dom=$id("gesture_area");
 	}
 });
 
@@ -95,7 +95,7 @@ function initToucher(){
 
 	</script>
 <style>
-#tap_area {
+#gesture_area {
 	width : 400px;
 	height : 200px;
 	padding : 10px;
@@ -107,9 +107,8 @@ function initToucher(){
 </style>
 </head>
 <body >
-<div id="info">info</div>
 
-<div id="tap_area"> please tap me </div>
+<div id="gesture_area"> gesture area </div>
 </body>
 
 </html>
