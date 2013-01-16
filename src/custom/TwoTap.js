@@ -1,7 +1,7 @@
 
 	Toucher.TwoTap=Toucher.Tap.extend({
 
-		lag : 100 ,
+		timeLag : 100 ,
 		limit : 5,
 
 		anotherTap : null ,
@@ -9,24 +9,24 @@
 		start : null ,
 		end : function(wrappers,event,controller){
 			
-			var touchWrapper=wrappers[0];
-			var enabled= this.checkMoveArea(touchWrapper) &&  this.checkEndTime(touchWrapper);
+			var t0=wrappers[0];
+			var enabled= this.checkMoveArea(t0) &&  this.checkTimeLag(t0);
 
 			if (wrappers.length==2){
-				var touchWrapper2=wrappers[1];
-				var enabled2= this.checkMoveArea(touchWrapper2) &&  this.checkEndTime(touchWrapper2);
+				var t1=wrappers[1];
+				var enabled2= this.checkMoveArea(t1) &&  this.checkTimeLag(t1);
 				if ( enabled && enabled2 ){
-					this.onTap(wrappers,event,controller);
+					this.trigger(wrappers,event,controller);
 					this.anotherTap=null;
 				}
 				return;
 			}
 
 			if (enabled && wrappers.length==1){
-				var startTime=touchWrapper.startTime;
+				var startTime=t0.startTime;
 				if (this.anotherTap){
-					if (startTime-this.anotherTap.startTime<=this.lag ){
-						this.onTap(wrappers,event,controller);
+					if (startTime-this.anotherTap.startTime<=this.timeLag ){
+						this.trigger(wrappers,event,controller);
 						this.anotherTap=null;
 						return;
 					}
@@ -34,9 +34,9 @@
 				}else{
 					this.anotherTap={
 						startTime : startTime,
-						endTime : touchWrapper.endTime,
-						pageX : touchWrapper.pageX ,
-						pageY : touchWrapper.pageY 
+						endTime : t0.endTime,
+						pageX : t0.pageX ,
+						pageY : t0.pageY 
 					}
 				}
 			}else{
@@ -45,11 +45,7 @@
 		},
 
 		/* Implement by user */
-		filterWrapper : function(touchWrapper,event,controller){
-			return false;
-		},
-		/* Implement by user */
-		onTap : function(wrappers,event,controller){
+		trigger : function(wrappers,event,controller){
 
 		}
 

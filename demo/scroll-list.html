@@ -61,11 +61,7 @@ var testTouch=new Toucher.Scroll({
 		return v
 	},
 
-	onScroll : function(touchWrappers,event,controller){
-		// tap事件要执行的动作
-		var touchWrapper=touchWrappers[0];
-		
-		var dy=touchWrapper.pageY-touchWrapper.lastPageY;
+	onScroll : function(dx,dy,touchWrappers,event,controller){
 		
 			var y=grid.y+dy;
 

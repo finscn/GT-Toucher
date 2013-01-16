@@ -57,20 +57,20 @@
         },
         onInit : function(){},
 
+        /* Could be overridden by user */
         filterWrappers : function(wrappers,event,controller){
             var validWrappers=[];
-            for (var j=wrappers.length-1;j>=0;j--){
-                var touchWrapper=wrappers[j];
-                if (this.filterWrapper(touchWrapper,event,controller)){
-                    validWrappers.push(touchWrapper)
+            for (var i=0,len=wrappers.length;i<len;i++){
+                var wrapper=wrappers[i];
+                if (this.filterWrapper(wrapper,event,controller)){
+                    validWrappers.push(wrapper)
                 }
             }
             return validWrappers;
-
         },
 
         /* Implement by user */
-        filterWrapper : function(touchWrapper,event,controller){
+        filterWrapper : function(wrapper,event,controller){
             return false;
         },
 
