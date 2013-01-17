@@ -238,6 +238,7 @@
         
             var _touched={};
             if (!this.useMouse){
+                // TODO : CONST.touches or CONST.targetTouches , it's a question!
                 var _touchedList=event[CONST.touches];
                 for (var j=_touchedList.length-1;j>=0;j--){
                     var t=_touchedList[j];
