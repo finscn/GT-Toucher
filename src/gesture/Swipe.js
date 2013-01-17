@@ -5,7 +5,7 @@ Toucher.Swipe=Toucher.Listener.extend({
 	maxTime : 1500,
 
 	filterWrappers : function(wrappers,event,controller){
-       return controller.useMouse || event.targetTouches.length==1;
+       return controller.useMouse || wrappers.length==1;
 	},
 
 	start : function(wrappers,event,controller){

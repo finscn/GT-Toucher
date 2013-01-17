@@ -238,7 +238,7 @@
         
             var _touched={};
             if (!this.useMouse){
-                var _touchedList=event[CONST.targetTouches];
+                var _touchedList=event[CONST.touches];
                 for (var j=_touchedList.length-1;j>=0;j--){
                     var t=_touchedList[j];
                     _touched[t.identifier]=true;

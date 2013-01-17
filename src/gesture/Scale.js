@@ -6,7 +6,7 @@ Toucher.Scale=Toucher.Listener.extend({
 	maxScale : 2,
 
 	filterWrappers : function(wrappers,event,controller){
-		return !controller.useMouse && event.targetTouches.length==2;
+		return !controller.useMouse && wrappers.length==2;
 	},
 
 	start : function(wrappers,event,controller){

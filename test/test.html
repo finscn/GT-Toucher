@@ -39,8 +39,10 @@ function $id(id){
 
 var controller=new Toucher.Controller({
 	beforeInit : function(){
-		this.dom=$id("gesture_area");
-	}
+		this.dom=document.body;
+		// this.dom=$id("gesture_area");
+	},
+	preventDefaultMove :true
 });
 
 function gestureInfo(type,args){
@@ -89,8 +91,8 @@ function initToucher(){
 	controller.addListener(doubleTap);
 	controller.addListener(pan);
 	controller.addListener(swipe);
-	// controller.addListener(rotate);
-	// controller.addListener(scale);
+	controller.addListener(rotate);
+	controller.addListener(scale);
 }
 
 	</script>

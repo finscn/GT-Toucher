@@ -9,8 +9,8 @@ Toucher.Tap=Toucher.Listener.extend({
 	limit : 10,
 	enabled : false ,
 
-	filterWrapper : function(wrapper,event,controller){
-       return controller.useMouse || event.targetTouches.length==1;
+	filterWrappers : function(wrappers,event,controller){
+       return controller.useMouse || wrappers.length==1;
 	},
 
 	start : function(wrappers,event,controller){
