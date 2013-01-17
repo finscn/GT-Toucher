@@ -1,8 +1,8 @@
 
 Toucher.Swipe=Toucher.Listener.extend({
 
-	minDistance : 50,
-	maxTime : 1500,
+	minDistance : 150,
+	maxTime : 1000,
 
 	filterWrappers : function(wrappers,event,controller){
        return controller.useMouse || wrappers.length==1;

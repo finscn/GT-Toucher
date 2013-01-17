@@ -85,6 +85,9 @@
 
             var Me=this;
             dom.addEventListener(CONST.START, function(event){   
+                if (Me.beforeStar && Me.beforeStar(event)===false){
+                    return;
+                }
                 Me.onStart(event);
                 if (Me.preventDefaultStart || Me.preventDefault){
                     event.preventDefault();
@@ -92,6 +95,9 @@
             }, this.useCapture );
 
             dom.addEventListener(CONST.MOVE, function(event){
+                if (Me.beforeMove && Me.beforeMove(event)===false){
+                    return;
+                }
                 Me.onMove(event);   
                 if (Me.preventDefaultMove|| Me.preventDefault){
                     event.preventDefault();
@@ -99,6 +105,9 @@
             }, this.useCapture );
 
             dom.addEventListener(CONST.END, function(event){
+                if (Me.beforeEnd && Me.beforeEnd(event)===false){
+                    return;
+                }
                 Me.onEnd(event);
                 if (Me.preventDefaultEnd|| Me.preventDefault){
                     event.preventDefault();
@@ -135,28 +144,22 @@
             this.offsetTop=top;
         },
 
-
+        beforeStar : null,
         onStart : function(event){
-
             var wrappers=this.getStartWrappers(event);
             this._emit("start",wrappers,event);
-
-
         },
+
+        beforeMove : null,
         onMove : function(event){
-
             var wrappers=this.getMoveWrappers(event);
-
             this._emit("move",wrappers,event);
-
         },
+
+        beforeEnd : null,
         onEnd : function(event){
-
             var wrappers=this.getEndWrappers(event);
-
             this._emit("end",wrappers,event);
-
-
         },
 
         addTouches : function(queue,item){
@@ -165,6 +168,7 @@
             }
             queue.push(item);
         },
+        
         removeFromTouches : function(queue,item){
             if (queue.length>=this.maxTouch){
                 queue.shift();
@@ -234,7 +238,6 @@
         getEndWrappers : function(event){   
             var _now=Date.now();
             var changedList=event[CONST.changedTouches]||[event];
-        
         
             var _touched={};
             if (!this.useMouse){
