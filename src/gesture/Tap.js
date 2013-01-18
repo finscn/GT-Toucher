@@ -5,7 +5,7 @@ Toucher.Tap=Toucher.Listener.extend({
 	maxDistance : 10,
 	enabled : false ,
 
-	filterWrappers : function(wrappers,event,controller){
+	filterWrappers : function(type,wrappers,event,controller){
        return wrappers.length==1;
 	},
 

@@ -1,7 +1,7 @@
 
 Toucher.Rotate=Toucher.Listener.extend({
 	
-	filterWrappers : function(wrappers,event,controller){
+	filterWrappers : function(type,wrappers,event,controller){
 		return wrappers.length==2;
 	},
 

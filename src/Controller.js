@@ -294,7 +294,7 @@
             for (var i=0,len=this.listenerList.length;i<len;i++){
                 var listener=this.listenerList[i];
                 if (listener[type]!=null){
-                    var validWrappers=listener.filterWrappers(wrappers,event,this);
+                    var validWrappers=listener.filterWrappers(type,wrappers,event,this);
                     if (validWrappers===true){
                         validWrappers=wrappers;
                     }

@@ -58,11 +58,11 @@
         onInit : function(){},
 
         /* Could be overridden by user */
-        filterWrappers : function(wrappers,event,controller){
+        filterWrappers : function(type,wrappers,event,controller){
             var validWrappers=[];
             for (var i=0,len=wrappers.length;i<len;i++){
                 var wrapper=wrappers[i];
-                if (this.filterWrapper(wrapper,event,controller)){
+                if (this.filterWrapper(type,wrapper,event,controller)){
                     validWrappers.push(wrapper)
                 }
             }
@@ -70,7 +70,7 @@
         },
 
         /* Implement by user */
-        filterWrapper : function(wrapper,event,controller){
+        filterWrapper : function(type,wrapper,event,controller){
             return false;
         },
 

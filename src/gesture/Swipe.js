@@ -4,7 +4,7 @@ Toucher.Swipe=Toucher.Listener.extend({
 	minDistance : 60,
 	maxTime : 1000,
 
-	filterWrappers : function(wrappers,event,controller){
+	filterWrappers : function(type,wrappers,event,controller){
        return wrappers.length==1;
 	},
 

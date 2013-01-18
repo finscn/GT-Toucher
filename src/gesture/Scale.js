@@ -5,7 +5,7 @@ Toucher.Scale=Toucher.Listener.extend({
 	minScale : 0.5,
 	maxScale : 2,
 
-	filterWrappers : function(wrappers,event,controller){
+	filterWrappers : function(type,wrappers,event,controller){
 		return controller.touchedCount==2;
 	},
 
