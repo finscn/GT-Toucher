@@ -2,7 +2,7 @@
 Toucher.Rotate=Toucher.Listener.extend({
 	
 	filterWrappers : function(wrappers,event,controller){
-		return !controller.useMouse && wrappers.length==2;
+		return wrappers.length==2;
 	},
 
 	start : function(wrappers,event,controller){
@@ -10,7 +10,7 @@ Toucher.Rotate=Toucher.Listener.extend({
 	},
 
 	move : function(wrappers,event,controller){
-		if (wrappers.length==2){
+		if (controller.touchedCount==2){
 			var t0=wrappers[0], t1=wrappers[1];
 			var disX= (t1.startPageX-t0.startPageX);
 			var disY= (t1.startPageY-t0.startPageY);

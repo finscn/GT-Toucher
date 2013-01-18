@@ -19,6 +19,7 @@
 
 <script src="../src/gesture/Tap.js"></script>
 <script src="../src/gesture/DoubleTap.js"></script>
+<script src="../src/gesture/Hold.js"></script>
 <script src="../src/gesture/Pan.js"></script>
 <script src="../src/gesture/Swipe.js"></script>
 <script src="../src/gesture/Rotate.js"></script>
@@ -67,6 +68,11 @@ function initToucher(){
 			gestureInfo("DoubleTap",arguments )
 		}
 	})
+	var hold=new Toucher.Hold({
+		trigger : function(args){
+			gestureInfo("Hold",arguments )
+		}
+	})
 	var pan=new Toucher.Pan({
 		trigger : function(args){
 			gestureInfo("Pan",arguments )
@@ -93,6 +99,14 @@ function initToucher(){
 	controller.addListener(swipe);
 	controller.addListener(rotate);
 	controller.addListener(scale);
+	controller.addListener(hold);
+
+	setInterval(function(){
+		var now=Date.now()
+		if (hold.startTime && now-hold.startTime>400){
+			hold.trigger();
+		}
+	},200)
 }
 
 	</script>

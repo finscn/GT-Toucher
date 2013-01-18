@@ -299,8 +299,9 @@
                         validWrappers=wrappers;
                     }
                     if (validWrappers && validWrappers.length>0){
-                        listener.touching=true;
-                        listener[type](validWrappers,event,this);
+                        if (listener[type](validWrappers,event,this)===false){
+                            break;
+                        }
                     }
                 }
             }

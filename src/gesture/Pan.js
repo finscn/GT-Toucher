@@ -4,11 +4,11 @@ Toucher.Pan=Toucher.Listener.extend({
 	enabled : false ,
 
 	filterWrappers : function(wrappers,event,controller){
-       return controller.useMouse || wrappers.length==1;
+       return wrappers.length==1;
 	},
 
 	start : function(wrappers,event,controller){
-		this.enabled=wrappers.length==1;
+		this.enabled=true;
 	},
 
 	move : function(wrappers,event,controller){
