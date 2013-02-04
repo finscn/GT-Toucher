@@ -19,8 +19,8 @@ Toucher.Scale=Toucher.Listener.extend({
 			t.push(controller.touched[key]);
 		}
 		var t0=t[0], t1=t[1];
-		var disX= (t0.startPageX-t1.startPageX);
-		var disY= (t0.startPageY-t1.startPageY);
+		var disX= (t1.startPageX-t0.startPageX);
+		var disY= (t1.startPageY-t0.startPageY);
 
 		var cx=t0.startPageX+(disX>>1), 
 			cy=t0.startPageY+(disY>>1);
