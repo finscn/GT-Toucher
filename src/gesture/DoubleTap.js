@@ -1,4 +1,4 @@
-
+"use strict";
 Toucher.DoubleTap=Toucher.Tap.extend({
 
 	maxTimeLag : 600 ,
@@ -13,7 +13,7 @@ Toucher.DoubleTap=Toucher.Tap.extend({
 				var startTime=t0.startTime;
 				var x=t0.pageX;
 				var y=t0.pageY;
-				if (this.prevTap){
+				if (this.prevTap!==null){
 					if (startTime-this.prevTap.endTime<=this.maxTimeLag
 						&& Math.abs(x-this.prevTap.pageX)<=this.maxDistance
 						&& Math.abs(y-this.prevTap.pageY)<=this.maxDistance ){

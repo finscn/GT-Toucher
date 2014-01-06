@@ -1,4 +1,4 @@
-
+"use strict";
 Toucher.Scale=Toucher.Listener.extend({
 
 	scale : 1 ,
@@ -19,6 +19,9 @@ Toucher.Scale=Toucher.Listener.extend({
 			t.push(controller.touched[key]);
 		}
 		var t0=t[0], t1=t[1];
+		if (!t1){
+			return;
+		}
 		var disX= (t1.startPageX-t0.startPageX);
 		var disY= (t1.startPageY-t0.startPageY);
 

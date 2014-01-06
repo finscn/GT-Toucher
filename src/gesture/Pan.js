@@ -1,18 +1,18 @@
-
+"use strict";
 Toucher.Pan=Toucher.Listener.extend({
 
 	enabled : false ,
 
 	filterWrappers : function(type,wrappers,event,controller){
-       return wrappers.length==1;
+       return controller.touchedCount==1;//wrappers.length==1;
 	},
 
 	start : function(wrappers,event,controller){
-		this.enabled=true;
+		// this.enabled=true;
 	},
 
 	move : function(wrappers,event,controller){
-		if (this.enabled){
+		// if (this.enabled){
 			var t0=wrappers[0];
 			var dx=t0.deltaX;
 			var dy=t0.deltaY;
@@ -21,11 +21,11 @@ Toucher.Pan=Toucher.Listener.extend({
 			var x=t0.pageX;
 			var y=t0.pageY;
 			this.trigger(dx,dy,sx,sy,x,y,wrappers,event,controller);
-		}
+		// }
 	},
 
 	end : function(wrappers,event,controller){
-		this.enabled=false;
+		// this.enabled=false;
 	},
 
 	/* Implement by user */

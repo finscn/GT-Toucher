@@ -1,4 +1,4 @@
-
+"use strict";
 Toucher.Rotate=Toucher.Listener.extend({
 	
 	filterWrappers : function(type,wrappers,event,controller){

@@ -1,4 +1,4 @@
-
+"use strict";
 Toucher.Hold=Toucher.Tap.extend({
 
 	startTime : 0,
