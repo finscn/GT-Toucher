@@ -18,9 +18,13 @@ Toucher.Joystick = Toucher.Listener.extend({
     follow: false,
     followSpeed: 0,
     followDistance: 0,
+    
+    disabled: false,
+
+    wayCount: 0,
 
     filterWrapper: function(type, wrapper, event, controller) {
-        return true;
+        return !this.disabled;//true;
     },
 
     isOnStick: function(x, y) {
@@ -52,6 +56,9 @@ Toucher.Joystick = Toucher.Listener.extend({
     },
 
     start: function(wrappers, event, controller) {
+        if (this.disabled) {
+            return;
+        }
         for (var i = 0; i < wrappers.length; i++) {
             var w = wrappers[i];
             if (this.touchId === null && this.isOnStick(w.pageX, w.pageY)) {
@@ -69,7 +76,7 @@ Toucher.Joystick = Toucher.Listener.extend({
     },
 
     move: function(wrappers, event, controller) {
-        if (this.touchId === null) {
+        if (this.disabled || this.touchId === null) {
             return;
         }
         for (var i = 0; i < wrappers.length; i++) {
@@ -82,14 +89,25 @@ Toucher.Joystick = Toucher.Listener.extend({
                     this.pageX = w.pageX;
                     this.pageY = w.pageY;
 
-                    this.rad = Math.atan2(dy, dx);
+                    var rad = Math.atan2(dy, dx);
+
+                    if (this.wayCount){
+                        var hs=Math.PI/this.wayCount;
+                        var s=hs*2;
+                        rad = Math.floor( (rad+hs) / s) * s;
+                    }
+
+                    this.rad = rad;
                     this.cos = Math.cos(this.rad);
                     this.sin = Math.sin(this.rad);
-                    var r = Math.min(this.maxMoveRadius, Math.sqrt(dx * dx + dy * dy));
-                    var x = r * this.cos;
-                    var y = r * this.sin;
-                    this.moveX = x;
-                    this.moveY = y;
+                    var r=Math.sqrt(dx * dx + dy * dy);
+                    if (r>this.maxMoveRadius){
+                        r=this.maxMoveRadius;
+                        dx=r*this.cos;
+                        dy=r*this.sin;
+                    }
+                    this.moveX = dx;
+                    this.moveY = dy;
                     this.moveRadius = r;
                     this.onTouchMove(w, event, controller);
 
@@ -104,6 +122,9 @@ Toucher.Joystick = Toucher.Listener.extend({
     },
 
     end: function(wrappers, event, controller) {
+        if (this.disabled) {
+            return;
+        }
         for (var i = 0; i < wrappers.length; i++) {
             var w = wrappers[i];
             if (this.touchId === w.id) {
