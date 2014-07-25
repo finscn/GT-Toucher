@@ -2,16 +2,15 @@
 
 (function(exports, undefined) {
 
-    var NS = exports.Toucher = exports.Toucher || {};
-    var CONST = NS.CONST = NS.CONST || {};
+    var ns = exports.Toucher = exports.Toucher || {};
+    var CONST = ns.CONST = ns.CONST || {};
 
-    var TouchWrapper = NS.TouchWrapper = function(identifier) {
+    var TouchWrapper = ns.TouchWrapper = function(identifier) {
         this.identifier = identifier;
         this.id = identifier;
     };
 
     var proto = {
-
         constructor: TouchWrapper,
 
         pixelRatio: 1,
@@ -61,7 +60,6 @@
 
             this.endClientX = this.clientX;
             this.endClientY = this.clientY;
-
 
             this.touching = false;
             this.endTime = Date.now();

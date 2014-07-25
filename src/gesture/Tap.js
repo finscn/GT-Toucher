@@ -6,9 +6,14 @@ Toucher.Tap = Toucher.Listener.extend({
     enabled: false,
 
     filterWrappers: function(type, wrappers, event, controller) {
-        return wrappers.length == 1;
+        if (wrappers.length == 1 && this.filterWrapper(type, wrappers[0], event, controller)) {
+            return wrappers;
+        }
+        return false;
     },
-
+    filterWrapper: function(type, wrapper, event, controller) {
+        return true;
+    },
     start: function(wrappers, event, controller) {
         this.enabled = true;
     },
@@ -21,7 +26,7 @@ Toucher.Tap = Toucher.Listener.extend({
             var x = t0.pageX;
             var y = t0.pageY;
             if (this.checkMoveDistance(t0) && this.checkTimeLag(t0)) {
-                this.trigger(x, y, wrappers, event, controller);
+                this.onTap(x, y, wrappers, event, controller);
             } else if (this.onTouchEnd != null) {
                 this.onTouchEnd(x, y, wrappers, event, controller);
             }
@@ -42,7 +47,7 @@ Toucher.Tap = Toucher.Listener.extend({
     },
 
     /* Implement by user */
-    trigger: function(x, y, wrappers, event, controller) {
+    onTap: function(x, y, wrappers, event, controller) {
 
     }
 

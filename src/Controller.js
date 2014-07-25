@@ -5,9 +5,10 @@
     var ns = exports.Toucher = exports.Toucher || {};
     var CONST = ns.CONST = ns.CONST || {};
 
+    CONST.EVENT_LIST = ["touches", "changedTouches", "targetTouches"];
     CONST.touches = "touches";
-    CONST.targetTouches = "targetTouches";
     CONST.changedTouches = "changedTouches";
+    CONST.targetTouches = "targetTouches";
     CONST.defaultTouchId = 1;
 
     var Controller = ns.Controller = function(cfg) {
@@ -43,11 +44,14 @@
         offsetLeft: 0,
         offsetTop: 0,
 
-        touchTimeLag: 30,
+        touchKeepTime: 30,
         maxTouch: 5,
         startTouches: null,
         moveTouches: null,
         endTouches: null,
+
+        moveTick: 0,
+        moveInterval: 0,
 
         beforeInit: function() {},
         init: function() {
@@ -59,7 +63,7 @@
             this.beforeInit();
 
             var dom = this.dom;
-            this.updateOffset(dom);
+            this.updateDomOffset();
 
             this.supportMultiTouch = "ontouchstart" in this.dom;
             if (!this.supportMultiTouch) {
@@ -67,14 +71,14 @@
             }
 
             if (this.useMouse) {
-                CONST.NOT_START = null;
+                // CONST.NOT_START = null;
                 CONST.START = "mousedown";
                 CONST.MOVE = "mousemove";
                 CONST.END = "mouseup";
-                // TODO
-                CONST.CANCEL = "touchcancel";
+                // no mouse cancel
+                CONST.CANCEL = null;
             } else {
-                CONST.NOT_START = null;
+                // CONST.NOT_START = null;
                 CONST.START = "touchstart";
                 CONST.MOVE = "touchmove";
                 CONST.END = "touchend";
@@ -84,53 +88,65 @@
             var Me = this;
 
             dom.addEventListener(CONST.START, function(event) {
-                // console.log("emited: "+CONST.START);
+                var now = Date.now();
                 if (Me.useMouse) {
                     Me.reset();
                 }
-                if (Me.beforeStart !== null && Me.beforeStart(event) === false) {
+                if (Me.beforeStart !== null && Me.beforeStart(event, now) === false) {
                     return;
                 }
-                Me.onStart(event);
+                Me.onStart(event, now);
                 if (Me.preventDefaultStart || Me.preventDefault) {
                     event.preventDefault();
                 }
             }, this.useCapture);
 
             dom.addEventListener(CONST.MOVE, function(event) {
-                // console.log("emited: "+CONST.MOVE);
-                if (Me.beforeMove !== null && Me.beforeMove(event) === false) {
+                var now = Date.now();
+                if (now - Me.moveTick < Me.moveInterval || Me.beforeMove !== null && Me.beforeMove(event, now) === false) {
                     return;
                 }
-                Me.onMove(event);
+                Me.moveTick = now;
+                Me.onMove(event, now);
                 if (Me.preventDefaultMove || Me.preventDefault) {
                     event.preventDefault();
                 }
             }, this.useCapture);
 
-            dom.addEventListener(CONST.END, function(event) {
-                // console.log("emited: "+CONST.END);
-                if (Me.beforeEnd !== null && Me.beforeEnd(event) === false) {
+            var endFun = function(event) {
+                var now = Date.now();
+                if (Me.beforeEnd !== null && Me.beforeEnd(event, now) === false) {
                     return;
                 }
-                Me.onEnd(event);
+                Me.onEnd(event, now);
                 if (Me.preventDefaultEnd || Me.preventDefault) {
                     event.preventDefault();
                 }
-            }, this.useCapture);
+            };
+            dom.addEventListener(CONST.END, endFun, this.useCapture);
 
-            dom.addEventListener(CONST.CANCEL, function(event) {
-                // console.log("emited: "+CONST.CANCEL);
-                if (Me.beforeCancel !== null && Me.beforeCancel(event) === false) {
-                    return;
-                }
-                Me.reset();
-                Me.onCancel(event);
-                if (Me.preventDefaultCancel || Me.preventDefault) {
+
+            if (this.useMouse) {
+                window.addEventListener("mouseout", function(event) {
+                    var from = event.relatedTarget || event.toElement;
+                    if (!from || from.nodeName == "HTML") {
+                        endFun(event);
+                    }
                     event.preventDefault();
-                }
-            }, true);
-
+                }, false);
+            } else {
+                dom.addEventListener(CONST.CANCEL, function(event) {
+                    var now = Date.now();
+                    if (Me.beforeCancel !== null && Me.beforeCancel(event) === false) {
+                        return;
+                    }
+                    Me.reset();
+                    Me.onCancel(event, now);
+                    if (Me.preventDefaultCancel || Me.preventDefault) {
+                        event.preventDefault();
+                    }
+                }, this.useCapture);
+            }
             this.onInit();
         },
         onInit: function() {},
@@ -147,8 +163,13 @@
             this.touchedCount = 0;
         },
 
-        updateOffset: function(dom) {
-            dom = dom || this.dom;
+        updateDomOffset: function() {
+            var dom = this.dom;
+            if (dom === window || dom === document) {
+                this.offsetLeft = 0;
+                this.offsetTop = 0;
+                return;
+            }
 
             if (dom.getBoundingClientRect !== undefined) {
                 var x = window.pageXOffset,
@@ -164,6 +185,7 @@
                 this.offsetTop = rect.top + y;
                 return;
             }
+
             var left = dom.offsetLeft,
                 top = dom.offsetTop;
             while ((dom = dom.parentNode) && dom !== document.body && dom !== document) {
@@ -175,26 +197,26 @@
         },
 
         beforeStart: null,
-        onStart: function(event) {
-            var wrappers = this.getStartWrappers(event);
-            this._emit("start", wrappers, event);
+        onStart: function(event, now) {
+            var wrappers = this.getStartWrappers(event, now);
+            this.dispatch("start", wrappers, event);
         },
 
         beforeMove: null,
-        onMove: function(event) {
-            var wrappers = this.getMoveWrappers(event);
-            this._emit("move", wrappers, event);
+        onMove: function(event, now) {
+            var wrappers = this.getMoveWrappers(event, now);
+            this.dispatch("move", wrappers, event);
         },
 
         beforeEnd: null,
-        onEnd: function(event) {
-            var wrappers = this.getEndWrappers(event);
-            this._emit("end", wrappers, event);
+        onEnd: function(event, now) {
+            var wrappers = this.getEndWrappers(event, now);
+            this.dispatch("end", wrappers, event);
         },
 
         beforeCancel: null,
-        onCancel: function() {
-            // this._emit("cancel",[],event);
+        onCancel: function(event, now) {
+            // this.dispatch("cancel",[],event);
             console.log("cancel", this.listenerList.length)
             for (var i = 0, len = this.listenerList.length; i < len; i++) {
                 var listener = this.listenerList[i];
@@ -220,8 +242,7 @@
             queue.push(item);
         },
 
-        getStartWrappers: function(event) {
-            var _now = Date.now();
+        getStartWrappers: function(event, now) {
             var changedList = event[CONST.changedTouches] || [event];
 
             var startWrappers = [];
@@ -240,17 +261,16 @@
                 startWrappers.push(touchWrapper);
 
                 var _touches = this.startTouches;
-                if (_now - _touches.lastTime > this.touchTimeLag) {
+                if (now - _touches.lastTime > this.touchKeepTime) {
                     _touches.length = 0;
                 }
-                _touches.lastTime = _now;
+                _touches.lastTime = now;
                 _touches.push(touchWrapper);
             }
             return startWrappers;
         },
 
-        getMoveWrappers: function(event) {
-            var _now = Date.now();
+        getMoveWrappers: function(event, now) {
             var changedList = event[CONST.changedTouches] || [event];
 
             var moveWrappers = [];
@@ -265,10 +285,10 @@
 
                     if (!touchWrapper.moveTime) {
                         var _touches = this.moveTouches;
-                        if (_now - _touches.lastTime > this.touchTimeLag) {
+                        if (now - _touches.lastTime > this.touchKeepTime) {
                             _touches.length = 0;
                         }
-                        _touches.lastTime = _now;
+                        _touches.lastTime = now;
                         _touches.push(touchWrapper);
                     }
 
@@ -280,8 +300,7 @@
             return moveWrappers;
         },
 
-        getEndWrappers: function(event) {
-            var _now = Date.now();
+        getEndWrappers: function(event, now) {
             var changedList = event[CONST.changedTouches] || [event];
 
             var _touched = {};
@@ -311,10 +330,10 @@
                         endWrappers.push(touchWrapper);
 
                         var _touches = this.endTouches;
-                        if (_now - _touches.lastTime > this.touchTimeLag) {
+                        if (now - _touches.lastTime > this.touchKeepTime) {
                             _touches.length = 0;
                         }
-                        _touches.lastTime = _now;
+                        _touches.lastTime = now;
                         _touches.push(touchWrapper);
                         this.removeWrapper(this.startTouches, touchId);
                         this.removeWrapper(this.moveTouches, touchId);
@@ -334,8 +353,8 @@
             }
             return false;
         },
-        _emit: function(type, wrappers, event) {
 
+        dispatch: function(type, wrappers, event) {
             for (var i = 0, len = this.listenerList.length; i < len; i++) {
                 var listener = this.listenerList[i];
                 if (listener[type] != null) {

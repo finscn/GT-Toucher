@@ -17,7 +17,7 @@ Toucher.DoubleTap=Toucher.Tap.extend({
 					if (startTime-this.prevTap.endTime<=this.maxTimeLag
 						&& Math.abs(x-this.prevTap.pageX)<=this.maxDistance
 						&& Math.abs(y-this.prevTap.pageY)<=this.maxDistance ){
-						this.trigger(x, y, wrappers,event,controller);
+						this.onTap(x, y, wrappers,event,controller);
 						this.prevTap=null;
 						this.enabled=false;
 						return;
@@ -44,7 +44,7 @@ Toucher.DoubleTap=Toucher.Tap.extend({
 	},
 
 	/* Implement by user */
-	trigger : function(x,y, wrappers,event,controller){
+	onTap : function(x,y, wrappers,event,controller){
 
 	}
 

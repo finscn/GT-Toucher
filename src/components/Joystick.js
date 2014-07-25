@@ -1,58 +1,58 @@
-Toucher.Joystick = Toucher.Listener.extend({
+Toucher.Joystick = Toucher.Joybutton.extend({
 
     rad: 0,
     cos: 1,
     sin: 0,
 
-    touchId: null,
     stickX: 0,
     stickY: 0,
+    defaultStickX: null,
+    defaultStickY: null,
 
     moveX: 0,
     moveY: 0,
     moveRadius: 0,
-    maxMoveRadius: 100,
+    distance: 0,
 
-    touchRegion: null,
-    dynamic: false,
-    follow: false,
-    followSpeed: 0,
-    followDistance: 0,
-    
-    disabled: false,
+    minMoveRadius: 0, // scale
+    maxMoveRadius: 100, // scale
 
-    wayCount: 0,
+    wayCount: 0, // 0 or null ==> full-ways
 
-    filterWrapper: function(type, wrapper, event, controller) {
-        return !this.disabled;//true;
+    followSpeed: 0, // scale
+    followDistance: 0, // scale
+
+    scale: 1,
+
+    // TODO
+    // warningEdge: false,
+    // screenWidth: 0,
+    // screenHeight: 0,
+
+    init: function() {
+        this.beforeInit();
+
+        this.setScale(this.scale);
+
+        this.onInit();
     },
 
-    isOnStick: function(x, y) {
-        if (!this.touchRegion) {
-            return true;
+    updateConfig: function() {
+        if (this.wayCount) {
+            this.wayRad = Math.PI * 2 / this.wayCount;
         }
-        return this.isInRect(this.touchRegion, x, y);
+        if (this.followSpeed) {
+            this.followDistance = Math.max(this.maxMoveRadius, this.followDistance);
+        }
     },
 
-    isInRect: function(rect, x, y) {
-        return rect && rect[0] < x && x < rect[2] && rect[1] < y && y < rect[3];
-    },
-
-    followTouch: function() {
-        var dis = this.followDistance;
-        var speed = this.followSpeed;
-        if (this.pageX - this.stickX > this.moveX + dis) {
-            this.stickX += speed;
-        }
-        if (this.pageX - this.stickX < this.moveX - dis) {
-            this.stickX -= speed;
-        }
-        if (this.pageY - this.stickY > this.moveY + dis) {
-            this.stickY += speed;
-        }
-        if (this.pageY - this.stickY < this.moveY - dis) {
-            this.stickY -= speed;
-        }
+    setScale: function(scale) {
+        scale = this.scale = scale || 1;
+        this.minMoveRadius *=scale;
+        this.maxMoveRadius *=scale;
+        this.followSpeed *=scale;
+        this.followDistance *=scale;
+        this.updateConfig();
     },
 
     start: function(wrappers, event, controller) {
@@ -61,13 +61,16 @@ Toucher.Joystick = Toucher.Listener.extend({
         }
         for (var i = 0; i < wrappers.length; i++) {
             var w = wrappers[i];
-            if (this.touchId === null && this.isOnStick(w.pageX, w.pageY)) {
+            if (this.touchId === null && this.isOnMe(w.pageX, w.pageY)) {
                 this.touchId = w.id;
+                this.touched = true;
                 this.pageX = w.pageX;
                 this.pageY = w.pageY;
                 if (this.dynamic) {
                     this.stickX = w.startPageX;
                     this.stickY = w.startPageY;
+                } else {
+                    this.updateMove();
                 }
                 this.onTouchStart(w, event, controller);
                 break;
@@ -82,43 +85,50 @@ Toucher.Joystick = Toucher.Listener.extend({
         for (var i = 0; i < wrappers.length; i++) {
             var w = wrappers[i];
             if (this.touchId === w.id) {
-                var dx = w.pageX - this.stickX;
-                var dy = w.pageY - this.stickY;
-
-                if (dx || dy) {
-                    this.pageX = w.pageX;
-                    this.pageY = w.pageY;
-
-                    var rad = Math.atan2(dy, dx);
-
-                    if (this.wayCount){
-                        var hs=Math.PI/this.wayCount;
-                        var s=hs*2;
-                        rad = Math.floor( (rad+hs) / s) * s;
-                    }
-
-                    this.rad = rad;
-                    this.cos = Math.cos(this.rad);
-                    this.sin = Math.sin(this.rad);
-                    var r=Math.sqrt(dx * dx + dy * dy);
-                    if (r>this.maxMoveRadius){
-                        r=this.maxMoveRadius;
-                        dx=r*this.cos;
-                        dy=r*this.sin;
-                    }
-                    this.moveX = dx;
-                    this.moveY = dy;
-                    this.moveRadius = r;
+                this.pageX = w.pageX;
+                this.pageY = w.pageY;
+                if (this.updateMove()) {
                     this.onTouchMove(w, event, controller);
-
-                    if (this.follow) {
-                        this.followTouch();
-                    }
                 }
                 break;
             }
         }
+    },
 
+    updateMove: function() {
+        var dx = this.dx = this.pageX - this.stickX;
+        var dy = this.dy = this.pageY - this.stickY;
+
+        if (!dx && !dy) {
+            this.distance = 0;
+            return false;
+        }
+
+        var r = this.distance = Math.sqrt(dx * dx + dy * dy);
+        if (r < this.minMoveRadius) {
+            this.moveX = this.moveY = this.moveRadius = 0;
+            return;
+        }
+
+        var rad = Math.atan2(dy, dx);
+
+        if (this.wayRad) {
+            rad = Math.floor(rad / this.wayRad + 0.5) * this.wayRad;
+        }
+
+        this.rad = rad;
+        this.cos = Math.cos(rad);
+        this.sin = Math.sin(rad);
+
+        if (r > this.maxMoveRadius) {
+            r = this.maxMoveRadius;
+            dx = r * this.cos;
+            dy = r * this.sin;
+        }
+        this.moveX = dx;
+        this.moveY = dy;
+        this.moveRadius = r;
+        return true;
     },
 
     end: function(wrappers, event, controller) {
@@ -128,36 +138,48 @@ Toucher.Joystick = Toucher.Listener.extend({
         for (var i = 0; i < wrappers.length; i++) {
             var w = wrappers[i];
             if (this.touchId === w.id) {
-                this.touchId = null;
-                // this.stickX = 0;
-                // this.stickY = 0;
-                this.pageX = 0;
-                this.pageY = 0;
-                this.moveX = 0;
-                this.moveY = 0;
-                this.moveRadius = 0;
-                this.rad = 0;
-                this.cos = 1;
-                this.sin = 0;
+                this.reset();
                 this.onTouchEnd(w, event, controller);
                 break;
             }
         }
     },
 
-
-    /* Implement by user */
-    onTouchStart: function(wrappers, event, controller) {
-
+    reset: function() {
+        this.touchId = null;
+        this.touched = false;
+        if (this.defaultStickX !== null) {
+            this.stickX = this.defaultStickX;
+        }
+        if (this.defaultStickY !== null) {
+            this.stickY = this.defaultStickY;
+        }
+        this.pageX = 0;
+        this.pageY = 0;
+        this.moveX = 0;
+        this.moveY = 0;
+        this.moveRadius = 0;
+        this.distance = 0;
+        this.rad = 0;
+        this.cos = 1;
+        this.sin = 0;
     },
 
-    /* Implement by user */
-    onTouchMove: function(wrappers, event, controller) {
-
-    },
-
-    /* Implement by user */
-    onTouchEnd: function(wrappers, event, controller) {
+    followTouch: function(timeStep) {
+        if (this.disabled || !this.touched || !this.followSpeed || this.distance <= this.followDistance) {
+            return;
+        }
+        var step = this.followSpeed * timeStep;
+        if (!step) {
+            return;
+        }
+        var dis = this.distance - this.followDistance;
+        if (dis < step) {
+            step = dis;
+        }
+        this.distance -= step;
+        this.stickX += this.cos * step;
+        this.stickY += this.sin * step;
 
     }
 

@@ -2,12 +2,10 @@
 
 (function(exports, undefined) {
 
-    var NS = exports.Toucher = exports.Toucher || {};
-    var CONST = NS.CONST = NS.CONST || {};
+    var ns = exports.Toucher = exports.Toucher || {};
+    var CONST = ns.CONST = ns.CONST || {};
 
-    CONST.EVENT_LIST = ["touches", "changedTouches", "targetTouches"];
-
-    var Listener = NS.Listener = function(cfg) {
+    var Listener = ns.Listener = function(cfg) {
 
         for (var property in cfg) {
             this[property] = cfg[property];
@@ -15,30 +13,32 @@
 
     };
 
+    // Use duck-type, GT-Toucher doesn't care the result of "instanceof"
     /* Use to create your custom-listener */
-    // It's duck-type, GT-Toucher doesn't care the result of "instanceof" 
     Listener.extend = function(proto) {
-        var pl = this;
-        var con = function(cfg) {
+        var superclass = this;
+        var constructor = function(cfg) {
             for (var property in cfg) {
                 this[property] = cfg[property];
             }
         };
-        var pt = pl.prototype;
-        for (var property in pt) {
-            con.prototype[property] = pt[property];
+        var superProto = superclass.prototype;
+        for (var p in superProto) {
+            constructor.prototype[p] = superProto[p];
         }
-        for (var property in proto) {
-            con.prototype[property] = proto[property];
+        for (var p in proto) {
+            constructor.prototype[p] = proto[p];
         }
-        con.prototype.constructor = con;
-        con.extend = pl.extend;
-        return con;
-    }
+        constructor.prototype.constructor = constructor;
+        constructor.extend = superclass.extend;
+        constructor.$super = superProto;
+        constructor.superclass = superclass;
+        return constructor;
+    };
 
-    var proto= {
-
+    var proto = {
         constructor: Listener,
+
         id: null,
         type: null,
 
