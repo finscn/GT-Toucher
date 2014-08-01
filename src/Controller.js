@@ -35,6 +35,7 @@
         useCapture: true,
         preventDefault: false, // is preventDefault All
 
+        ignoreNativeGesture: true,
 
         preventDefaultStart: false,
         preventDefaultMove: false,
@@ -86,6 +87,21 @@
             }
 
             var Me = this;
+
+            if (!this.useMouse && this.ignoreNativeGesture) {
+                // gesturestart, gesturechange, gestureend
+                if ("ongesturestart" in dom) {
+                    dom.addEventListener("gesturestart", function(event) {
+                        event.preventDefault();
+                    }, true);
+                    dom.addEventListener("gesturechange", function(event) {
+                        event.preventDefault();
+                    }, true);
+                    dom.addEventListener("gestureend", function(event) {
+                        event.preventDefault();
+                    }, true);
+                }
+            }
 
             dom.addEventListener(CONST.START, function(event) {
                 var now = Date.now();

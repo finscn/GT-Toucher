@@ -22,6 +22,13 @@ Toucher.Joybutton = Toucher.Listener.extend({
         this.touchId = null;
         this.touched = false;
     },
+
+    reset: function(){
+        this.disabled = false;
+        this.touchId = null;
+        this.touched = false;
+    },
+
     isOnMe: function(x, y) {
         if (!this.touchRegion) {
             return true;

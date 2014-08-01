@@ -115,7 +115,7 @@ var doubleTap=new Toucher.DoubleTap({
 		return wrapper.target.id=="doubleTapArea";
 	},
 
-    onTap: function(x, y, wrappers, event, controller) {
+    onDoubleTap: function(x, y, wrappers, event, controller) {
 		var wrapper=wrappers[0];
 		var endTime=wrapper.endTime;
 		// 判断是否在一个dom上, 通常不需要

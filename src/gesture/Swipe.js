@@ -5,11 +5,11 @@ Toucher.Swipe = Toucher.Listener.extend({
     maxTime: 1000,
 
     filterWrappers: function(type, wrappers, event, controller) {
-        return controller.touchedCount == 0 && wrappers.length == 1;
+        return wrappers.length == 1;
     },
 
     start: function(wrappers, event, controller) {
-        // this.enabled=true;
+
     },
 
     move: function(wrappers, event, controller) {
@@ -17,7 +17,6 @@ Toucher.Swipe = Toucher.Listener.extend({
     },
 
     end: function(wrappers, event, controller) {
-        // if (this.enabled){
         var t0 = wrappers[0];
         var time = (t0.endTime - t0.startTime);
         if (time > this.maxTime) {
@@ -33,17 +32,15 @@ Toucher.Swipe = Toucher.Listener.extend({
         //  return;
         // }
         // var k=disY/disX;
-        // this.trigger(dis,time,k,wrappers,event,controller);
+        // this.onSwipe(dis,time,k,wrappers,event,controller);
         if (disX != 0 || disY != 0) {
-            this.trigger(disX, disY, time, wrappers, event, controller);
+            this.onSwipe(disX, disY, time, wrappers, event, controller);
         }
-        // }
-        // this.enabled = false;
     },
     onTouchEnd: null,
 
     /* Implement by user */
-    trigger: function(disX, disY, time, wrappers, event, controller) {
+    onSwipe: function(disX, disY, time, wrappers, event, controller) {
 
     }
 
