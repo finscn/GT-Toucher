@@ -40,84 +40,109 @@ GT-Toucher 是对支持多点触控的浏览器(目前只测试了 iOS safari)�
 	// 在这个示例里,tap的定义是: 
 	// 一根手指,按住屏幕,并在800毫秒内抬起,同时在按住屏幕期间手指的移动范围在3像素之内
 
-	Toucher.Tap=Toucher.Listener.extend({
+    "use strict";
 
-		delay : 800 ,
-		limit : 3,
+    Toucher.Tap = Toucher.Listener.extend({
 
-		enabled : false ,
+        maxTimeLag: 800,
+        maxDistance: 15,
 
-		start : function(touchWrappers,event,controller){
-			// 只有一根手指时有效
-			this.enabled=touchWrappers.length==1;
-		},
+        filterWrappers: function(type, wrappers, event, controller) {
+            if (wrappers.length == 1 && this.filterWrapper(type, wrappers[0], event, controller)) {
+                return wrappers;
+            }
+            return false;
+        },
 
-		move : function(touchWrappers,event,controller){
-			if (this.enabled){
-				var touchWrapper=touchWrappers[0];
-				var dx=Math.abs(touchWrapper.moveAmountX);
-				var dy=Math.abs(touchWrapper.moveAmountY);
+        filterWrapper: function(type, wrapper, event, controller) {
+            return true;
+        },
 
-				// 如果手指按在屏幕上时,有移动,且移动范围大于3像素,则无效
-				if (dx>this.limit || dy>this.limit){
-					this.enabled=false;
-				}			
-			}
-		},
+        start: function(wrappers, event, controller) {
+            if (this.onTouchStart != null) {
+                this.onTouchStart(wrappers, event, controller);
+            }
+        },
+        onTouchStart: null,
 
-		end : function(touchWrappers,event,controller){
-			var touchWrapper=touchWrappers[0];
+        move: function(wrappers, event, controller) {
+            if (this.onTouchMove != null) {
+                this.onTouchMove(wrappers, event, controller);
+            }
+        },
+        onTouchMove: null,
 
-			//手指在屏幕上抬起的太迟了, 也无效
-			if ((touchWrapper.endTime-touchWrapper.startTime)>this.delay){
-				this.enabled=false;
-			}
+        end: function(wrappers, event, controller) {
+            var t0 = wrappers[0];
+            var x = t0.pageX;
+            var y = t0.pageY;
+            if (this.checkMoveDistance(t0) && this.checkTimeLag(t0)) {
+                this.tapped = true;
+                this.onTap(x, y, wrappers, event, controller);
+            }
+            if (this.onTouchEnd != null) {
+                this.onTouchEnd(x, y, wrappers, event, controller);
+            }
+            this.tapped = false;
+        },
+        onTouchEnd: null,
 
-			if (this.enabled){
-				// tap事件要执行的动作
-				this.onTap(touchWrappers,event,controller);
-			}
+        checkMoveDistance: function(wrapper) {
+            var dx = Math.abs(wrapper.moveAmountX);
+            var dy = Math.abs(wrapper.moveAmountY);
 
-			this.enabled=false;
-		},
+            return dx <= this.maxDistance && dy <= this.maxDistance;
+        },
 
-		/* Implement by user */
-		filterWrapper : function(touchWrapper,event,controller){
-			return false;
-		},
-		/* Implement by user */
-		onTap : function(touchWrappers,event,controller){
+        checkTimeLag: function(wrapper) {
+            return wrapper.endTime - wrapper.startTime < this.maxTimeLag;
+        },
 
-		}
+        /* Implement by user */
+        onTap: function(x, y, wrappers, event, controller) {
 
-	});
+        }
+
+    });
+
 
 
 	
 如何使用: (以下只是代码片段,详见demo源码)
 
-	//创建一个tap listener的实例	
-	var testTouch=new Toucher.Tap({
+    //创建一个tap listener的实例
+    var tap=new Toucher.Tap({
 
-		filterWrapper : function(touchWrapper,event,controller){
-			// 只有点击了 id==tap_area 的dom对象,才会触发这个事件
-			// 条件可以是任意,不仅仅局限于dom的判断, 例如可以是点击的区域坐标 时间等等,
-			// 甚至可以和点击事件无关
-			return touchWrapper.target.id=="tap_area";
-		},
+        filterWrapper: function(type, wrapper, event, controller) {
+            // 只有点击了 id==tapArea 的dom对象,才会触发这个事件
+            // 条件可以是任意,不仅仅局限于dom的判断, 例如可以是点击的区域坐标 时间等等,
+            // 甚至可以和点击事件无关
+            return wrapper.target.id=="tapArea";
+        },
 
-		onTap : function(touchWrappers,event,controller){
-			// tap事件要执行的动作
-			var touchWrapper=touchWrappers[0];
-			var tapX=touchWrapper.startPageX;
-			var tapY=touchWrapper.startPageY;
-			var endTime=touchWrapper.endTime;
-			$id("info").innerHTML="Tap pos ["+tapX+","+tapY+"], tap time:"+endTime;
-		}
-	});
-	
-	//把自定义事件注册到controller里
-	controller.addListener(testTouch);
+        onTap: function(x, y, wrappers, event, controller) {
+            // tap事件要执行的动作
+            var wrapper=wrappers[0];
+            var endTime=wrapper.endTime;
+            // 判断是否在一个dom上, 通常不需要
+            // if (wrapper.startTarget == wrapper.target) {
+                $id("info").innerHTML="Tap: pos "+x+","+y+" ,  time "+endTime;
+            // }
+        }
+    });
+
+    // 创建一个 touch controller 的实例
+        var controller=new Toucher.Controller({
+        beforeInit : function(){
+            this.dom=document.body;
+        }
+    });
+
+    window.onload=function(){
+        controller.init();
+        //把自定义事件注册到controller里
+        controller.addListener(tap);
+    }
 	
 
 
