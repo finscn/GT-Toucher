@@ -23,7 +23,7 @@
     body {
         border:0px;
         margin:0px;
-        padding:10px;
+        padding:0px;
         height:100%;
     }
     body, div, canvas {
@@ -99,19 +99,15 @@
 <script>
 
 
-
 function $id(id){
     return document.getElementById(id);
 }
 
 
-
 var pageSlider = new PageSlider({
     pageClassName:"page",
     swipeHolder: "swipeArea",
-})
-
-
+});
 
 
 var controller=new Toucher.Controller({

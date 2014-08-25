@@ -39,9 +39,9 @@ PageSlider.prototype = {
             this.setDomPos(p, 0, 0);
         } else {
             var Me = this;
-            this.setDomPos(swipeArea, 0, "-10%");
+            this.setDomPos(Me.swipeHolder, 0, "-10%");
             setTimeout(function() {
-                Me.setDomPos(swipeArea, 0, 0);
+                Me.setDomPos(Me.swipeHolder, 0, 0);
             }, 250);
         }
     },
@@ -52,9 +52,9 @@ PageSlider.prototype = {
             this.currentPage--;
         } else {
             var Me = this;
-            this.setDomPos(swipeArea, 0, "10%");
+            this.setDomPos(Me.swipeHolder, 0, "10%");
             setTimeout(function() {
-                Me.setDomPos(swipeArea, 0, 0);
+                Me.setDomPos(Me.swipeHolder, 0, 0);
             }, 250);
         }
     }
