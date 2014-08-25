@@ -25,8 +25,8 @@
             this.startPageY = this.lastPageY = this.pageY;
             this.startTarget = this.lastTarget = this.target;
 
-            this.startClientX = this.lastClientX = this.clientX;
-            this.startClientY = this.lastClientY = this.clientY;
+            // this.startClientX = this.lastClientX = this.clientX;
+            // this.startClientY = this.lastClientY = this.clientY;
 
             this.deltaX = 0;
             this.deltaY = 0;
@@ -58,8 +58,8 @@
             this.endPageY = this.pageY;
             this.endTarget = this.target;
 
-            this.endClientX = this.clientX;
-            this.endClientY = this.clientY;
+            // this.endClientX = this.clientX;
+            // this.endClientY = this.clientY;
 
             this.touching = false;
             this.endTime = Date.now();
@@ -75,14 +75,14 @@
             this.lastTarget = this.target;
             this.lastPageX = this.pageX;
             this.lastPageY = this.pageY;
-            this.lastClientX = this.clientX;
-            this.lastClientY = this.clientY;
+            // this.lastClientX = this.clientX;
+            // this.lastClientY = this.clientY;
 
             this.target = rawTouch.target;
             this.pageX = rawTouch.pageX * this.pixelRatio;
             this.pageY = rawTouch.pageY * this.pixelRatio;
-            this.clientX = rawTouch.clientX * this.pixelRatio;
-            this.clientY = rawTouch.clientY * this.pixelRatio;
+            // this.clientX = rawTouch.clientX * this.pixelRatio;
+            // this.clientY = rawTouch.clientY * this.pixelRatio;
 
             this.deltaX = this.pageX - this.lastPageX;
             this.deltaY = this.pageY - this.lastPageY;

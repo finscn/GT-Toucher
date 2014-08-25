@@ -15,25 +15,25 @@
 
     // Use duck-type, GT-Toucher doesn't care the result of "instanceof"
     /* Use to create your custom-listener */
-    Listener.extend = function(proto) {
-        var superclass = this;
-        var constructor = function(cfg) {
+    Listener.extend = function(prototype) {
+        var subclass = function(cfg) {
             for (var property in cfg) {
                 this[property] = cfg[property];
             }
         };
-        var superProto = superclass.prototype;
-        for (var p in superProto) {
-            constructor.prototype[p] = superProto[p];
+        var cp = subclass.prototype;
+        var sp = this.prototype;
+        for (var p in sp) {
+            cp[p] = sp[p];
         }
-        for (var p in proto) {
-            constructor.prototype[p] = proto[p];
+        for (var p in prototype) {
+            cp[p] = prototype[p];
         }
-        constructor.prototype.constructor = constructor;
-        constructor.extend = superclass.extend;
-        constructor.$super = superProto;
-        constructor.superclass = superclass;
-        return constructor;
+        cp.constructor = subclass;
+        subclass.extend = this.extend;
+        subclass.$super = sp;
+        subclass.superclass = this;
+        return subclass;
     };
 
     var proto = {
@@ -75,13 +75,13 @@
         },
 
         /* Implement by user */
-        // function(vaildWrappers, event, controller){ } 
+        // function(vaildWrappers, event, controller){ }
         start: null,
 
-        // function(vaildWrappers, event, controller){ } 
+        // function(vaildWrappers, event, controller){ }
         move: null,
 
-        // function(vaildWrappers, event, controller){ } 
+        // function(vaildWrappers, event, controller){ }
         end: null,
 
         cancel: null
