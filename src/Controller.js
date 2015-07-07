@@ -338,7 +338,7 @@
                 if (!_touched[touchId]) {
                     var touchWrapper = this.touched[touchId];
                     if (touchWrapper) {
-                        touchWrapper.end(touch);
+                        touchWrapper.end(touch, event);
 
                         delete this.touched[touchId];
                         this.touchedCount--;

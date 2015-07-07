@@ -34,13 +34,15 @@
             this.moveAmountY = 0;
 
             this.touching = true;
-            this.startTime = this.endTime = Date.now();
+            this.startTime = this.endTime = this.moveTime = Date.now();
 
         },
 
         move: function(rawTouch, rawEvent) {
 
             this.type = CONST.MOVE;
+
+            this.lastMoveTime = this.moveTime;
 
             this.update(rawTouch, rawEvent);
 
