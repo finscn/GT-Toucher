@@ -88,21 +88,6 @@
 
             var Me = this;
 
-            if (!this.useMouse && this.ignoreNativeGesture) {
-                // gesturestart, gesturechange, gestureend
-                if ("ongesturestart" in dom) {
-                    dom.addEventListener("gesturestart", function(event) {
-                        event.preventDefault();
-                    }, true);
-                    dom.addEventListener("gesturechange", function(event) {
-                        event.preventDefault();
-                    }, true);
-                    dom.addEventListener("gestureend", function(event) {
-                        event.preventDefault();
-                    }, true);
-                }
-            }
-
             dom.addEventListener(CONST.START, function(event) {
                 var now = Date.now();
                 if (Me.useMouse) {
@@ -141,7 +126,6 @@
             };
             dom.addEventListener(CONST.END, endFun, this.useCapture);
 
-
             if (this.useMouse) {
                 window.addEventListener("mouseout", function(event) {
                     var from = event.relatedTarget || event.toElement;
@@ -163,6 +147,22 @@
                     }
                 }, this.useCapture);
             }
+
+            if (!this.useMouse && this.ignoreNativeGesture) {
+                // gesturestart, gesturechange, gestureend
+                if ("ongesturestart" in window) {
+                    window.addEventListener("gesturestart", function(event) {
+                        event.preventDefault();
+                    }, false);
+                    window.addEventListener("gesturechange", function(event) {
+                        event.preventDefault();
+                    }, false);
+                    window.addEventListener("gestureend", function(event) {
+                        event.preventDefault();
+                    }, false);
+                }
+            }
+
             this.onInit();
         },
         onInit: function() {},

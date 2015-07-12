@@ -48,10 +48,10 @@ Toucher.Joystick = Toucher.Joybutton.extend({
 
     setScale: function(scale) {
         scale = this.scale = scale || 1;
-        this.minMoveRadius *=scale;
-        this.maxMoveRadius *=scale;
-        this.followSpeed *=scale;
-        this.followDistance *=scale;
+        this.minMoveRadius *= scale;
+        this.maxMoveRadius *= scale;
+        this.followSpeed *= scale;
+        this.followDistance *= scale;
         this.updateConfig();
     },
 
@@ -111,7 +111,9 @@ Toucher.Joystick = Toucher.Joybutton.extend({
         }
 
         var rad = Math.atan2(dy, dx);
-
+        if (rad < 0) {
+            rad += Math.PI * 2;
+        }
         if (this.wayRad) {
             rad = Math.floor(rad / this.wayRad + 0.5) * this.wayRad;
         }
@@ -136,10 +138,10 @@ Toucher.Joystick = Toucher.Joybutton.extend({
             return;
         }
         for (var i = 0; i < wrappers.length; i++) {
-            var w = wrappers[i];
-            if (this.touchId === w.id) {
+            var wrapper = wrappers[i];
+            if (this.touchId === wrapper.id) {
                 this.reset();
-                this.onTouchEnd(w, event, controller);
+                this.onTouchEnd(wrapper, event, controller);
                 break;
             }
         }

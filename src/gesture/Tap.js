@@ -31,15 +31,15 @@ Toucher.Tap = Toucher.Listener.extend({
     onTouchMove: null,
 
     end: function(wrappers, event, controller) {
-        var t0 = wrappers[0];
-        var x = t0.pageX;
-        var y = t0.pageY;
-        if (this.checkMoveDistance(t0) && this.checkTimeLag(t0)) {
+        var wrapper = wrappers[0];
+        var x = wrapper.pageX;
+        var y = wrapper.pageY;
+        if (this.checkMoveDistance(wrapper) && this.checkTimeLag(wrapper)) {
             this.tapped = true;
             this.onTap(x, y, wrappers, event, controller);
         }
         if (this.onTouchEnd != null) {
-            this.onTouchEnd(x, y, wrappers, event, controller);
+            this.onTouchEnd(wrapper, event, controller);
         }
         this.tapped = false;
     },

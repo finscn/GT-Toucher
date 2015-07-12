@@ -46,6 +46,7 @@
         offsetTop: 0,
 
         order: 1,
+        multi: 1,
 
         beforeInit: function() {},
         init: function() {
