@@ -23,18 +23,18 @@ Toucher.Joybutton = Toucher.Listener.extend({
         this.touched = false;
     },
 
-    reset: function(){
+    reset: function() {
         this.disabled = false;
         this.touchId = null;
         this.touched = false;
     },
 
     isOnMe: function(x, y) {
-        // TODO : controller.pixelRatio
         if (!this.touchRegion) {
             return true;
         }
-        return this.isInRect(this.touchRegion, x, y);
+        var pixelRatio = this.controller.pixelRatio;
+        return this.isInRect(this.touchRegion, x / pixelRatio, y / pixelRatio);
     },
 
     isInRect: function(rect, x, y) {
