@@ -29,6 +29,10 @@
         dom: document,
 
         pixelRatio: 1,
+        offsetX: 0,
+        offsetY: 0,
+        offsetLeft: 0,
+        offsetTop: 0,
 
         supportMultiTouch: false,
         useMouse: false,
@@ -42,8 +46,6 @@
         preventDefaultEnd: false,
         preventDefaultCancel: false,
 
-        offsetLeft: 0,
-        offsetTop: 0,
 
         touchKeepTime: 30,
         maxTouch: 5,
@@ -270,6 +272,8 @@
                 var touchWrapper = this.touched[touchId];
                 touchWrapper = new this.wrapperClass(touchId);
                 touchWrapper.pixelRatio = this.pixelRatio;
+                touchWrapper.offsetX = this.offsetX;
+                touchWrapper.offsetY = this.offsetY;
 
                 this.touched[touchId] = touchWrapper;
                 this.touchedCount++;

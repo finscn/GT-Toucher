@@ -14,6 +14,8 @@
         constructor: TouchWrapper,
 
         pixelRatio: 1,
+        offsetX: 0,
+        offsetY: 0,
 
         start: function(rawTouch, rawEvent) {
 
@@ -86,8 +88,8 @@
             // this.lastClientY = this.clientY;
 
             this.target = rawTouch.target;
-            this.pageX = rawTouch.pageX * this.pixelRatio;
-            this.pageY = rawTouch.pageY * this.pixelRatio;
+            this.pageX = (rawTouch.pageX + this.offsetX) * this.pixelRatio;
+            this.pageY = (rawTouch.pageY + this.offsetY) * this.pixelRatio;
             // this.clientX = rawTouch.clientX * this.pixelRatio;
             // this.clientY = rawTouch.clientY * this.pixelRatio;
 
