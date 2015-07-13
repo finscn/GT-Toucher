@@ -1,11 +1,12 @@
 "use strict";
 
-(function(exports, undefined) {
+var Toucher = Toucher || {};
 
-    var ns = exports.Toucher = exports.Toucher || {};
-    var CONST = ns.CONST = ns.CONST || {};
+(function(exports) {
 
-    var TouchWrapper = ns.TouchWrapper = function(identifier) {
+    var CONST = exports.CONST;
+
+    var TouchWrapper = function(identifier) {
         this.identifier = identifier;
         this.id = identifier;
     };
@@ -106,4 +107,6 @@
         TouchWrapper.prototype[p] = proto[p];
     }
 
-})(this);
+    exports.TouchWrapper = TouchWrapper;
+
+})(Toucher);

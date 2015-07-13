@@ -1,23 +1,25 @@
 "use strict";
 
-(function(exports, undefined) {
+var Toucher = Toucher || {};
 
-    var ns = exports.Toucher = exports.Toucher || {};
-    var CONST = ns.CONST = ns.CONST || {};
+(function(exports) {
 
+    // var TouchWrapper = exports.TouchWrapper;
+
+    var CONST = {} ;
     CONST.EVENT_LIST = ["touches", "changedTouches", "targetTouches"];
     CONST.touches = "touches";
     CONST.changedTouches = "changedTouches";
     CONST.targetTouches = "targetTouches";
     CONST.defaultTouchId = 1;
 
-    var Controller = ns.Controller = function(cfg) {
+    var Controller = function(cfg) {
 
         for (var property in cfg) {
             this[property] = cfg[property];
         }
 
-        this.wrapperClass = this.wrapperClass || ns.TouchWrapper;
+        this.wrapperClass = this.wrapperClass || exports.TouchWrapper;
     };
 
     var proto = {
@@ -425,5 +427,7 @@
         Controller.prototype[p] = proto[p];
     }
 
+    exports.Controller = Controller;
+    exports.CONST = CONST;
 
-}(this));
+}(Toucher));

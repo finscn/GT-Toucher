@@ -1,11 +1,12 @@
 "use strict";
 
-(function(exports, undefined) {
+var Toucher = Toucher || {};
 
-    var ns = exports.Toucher = exports.Toucher || {};
-    var CONST = ns.CONST = ns.CONST || {};
+(function(exports) {
 
-    var Listener = ns.Listener = function(cfg) {
+    var CONST = exports.CONST;
+
+    var Listener = function(cfg) {
 
         for (var property in cfg) {
             this[property] = cfg[property];
@@ -93,6 +94,6 @@
         Listener.prototype[p] = proto[p];
     }
 
+    exports.Listener = Listener;
 
-
-})(this);
+})(Toucher);
