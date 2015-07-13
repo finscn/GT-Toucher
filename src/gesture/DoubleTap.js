@@ -1,17 +1,24 @@
 "use strict";
+
+// TODO
+
 Toucher.DoubleTap = Toucher.Tap.extend({
 
     maxTimeLag: 800,
     maxDistance: 10,
     prevTap: null,
 
+    filterWrappers: function(type, wrappers, event, controller) {
+        return wrappers.length == 1;
+    },
+
     end: function(wrappers, event, controller) {
-        var t0 = wrappers[0];
-        if (this.checkMoveDistance(t0) && this.checkTimeLag(t0)) {
-            var startTime = t0.startTime;
-            var endTime = t0.endTime;
-            var x = t0.pageX;
-            var y = t0.pageY;
+        var wrapper = wrappers[0];
+        if (this.checkMoveDistance(wrapper) && this.checkTimeLag(wrapper)) {
+            var startTime = wrapper.startTime;
+            var endTime = wrapper.endTime;
+            var x = wrapper.pageX;
+            var y = wrapper.pageY;
             if (this.prevTap === null || endTime - this.prevTap.startTime > this.maxTimeLag || Math.abs(x - this.prevTap.pageX) > this.maxDistance || Math.abs(y - this.prevTap.pageY) > this.maxDistance) {
                 this.prevTap = {
                     startTime: startTime,
@@ -19,10 +26,10 @@ Toucher.DoubleTap = Toucher.Tap.extend({
                     pageX: x,
                     pageY: y
                 };
-                this.onFirstTap(x, y, wrappers, event, controller);
+                this.onFirstTap(x, y, wrapper, event, controller);
             } else {
                 this.tapped = true;
-                this.onDoubleTap(x, y, wrappers, event, controller);
+                this.onDoubleTap(x, y, wrapper, event, controller);
                 this.prevTap = null;
                 this.valid = false;
                 this.tapped = false;
@@ -34,10 +41,10 @@ Toucher.DoubleTap = Toucher.Tap.extend({
     },
 
     /* Implement by user */
-    onFirstTap: function(x, y, wrappers, event, controller) {
+    onFirstTap: function(x, y, wrapper, event, controller) {
 
     },
-    onDoubleTap: function(x, y, wrappers, event, controller) {
+    onDoubleTap: function(x, y, wrapper, event, controller) {
 
     }
 

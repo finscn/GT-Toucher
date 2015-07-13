@@ -76,17 +76,41 @@ var Toucher = Toucher || {};
             return false;
         },
 
+        // triggerEvent: function(eventName, wrappers, event, controller) {
+        //     if (!this[eventName]) {
+        //         return;
+        //     }
+        //     var index = 0;
+        //     var count = Math.min(wrappers.length, this.multi);
+        //     for (var i = 0; i < count; i++) {
+        //         var wrapper = wrappers[i];
+        //         var x = wrapper.pageX;
+        //         var y = wrapper.pageY;
+        //         wrapper.index = index++;
+        //         this[eventName](x, y, wrapper, event, controller);
+        //     }
+        // },
+
         /* Implement by user */
-        // function(vaildWrappers, event, controller){ }
-        start: null,
 
         // function(vaildWrappers, event, controller){ }
-        move: null,
+        "start": null,
+        // function(x, y, wrapper, event, controller){ }
+        onTouchStart: null,
 
         // function(vaildWrappers, event, controller){ }
-        end: null,
+        "move": null,
+        // function(x, y, wrapper, event, controller){ }
+        onTouchMove: null,
 
-        cancel: null
+        // function(vaildWrappers, event, controller){ }
+        "end": null,
+        // function(x, y, wrapper, event, controller){ }
+        onTouchEnd: null,
+
+        "cancel": null,
+        // function(null<wrapper>, event, controller){ }
+        onTouchCancel: null,
 
     };
 

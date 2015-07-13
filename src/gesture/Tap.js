@@ -5,50 +5,13 @@ Toucher.Tap = Toucher.Listener.extend({
     maxTimeLag: 800,
     maxDistance: 15,
 
-    filterWrappers: function(type, wrappers, event, controller) {
-        if (wrappers.length == 1 && this.filterWrapper(type, wrappers[0], event, controller)) {
-            return wrappers;
-        }
-        return false;
-    },
-
     filterWrapper: function(type, wrapper, event, controller) {
         return true;
     },
 
-    start: function(wrappers, event, controller) {
-        if (this.onTouchStart != null) {
-            this.onTouchStart(wrappers, event, controller);
-        }
-    },
-    onTouchStart: null,
-
-    move: function(wrappers, event, controller) {
-        if (this.onTouchMove != null) {
-            this.onTouchMove(wrappers, event, controller);
-        }
-    },
-    onTouchMove: null,
-
-    end: function(wrappers, event, controller) {
-        var wrapper = wrappers[0];
-        var x = wrapper.pageX;
-        var y = wrapper.pageY;
-        if (this.checkMoveDistance(wrapper) && this.checkTimeLag(wrapper)) {
-            this.tapped = true;
-            this.onTap(x, y, wrappers, event, controller);
-        }
-        if (this.onTouchEnd != null) {
-            this.onTouchEnd(wrapper, event, controller);
-        }
-        this.tapped = false;
-    },
-    onTouchEnd: null,
-
     checkMoveDistance: function(wrapper) {
         var dx = Math.abs(wrapper.moveAmountX);
         var dy = Math.abs(wrapper.moveAmountY);
-
         return dx <= this.maxDistance && dy <= this.maxDistance;
     },
 
@@ -56,8 +19,40 @@ Toucher.Tap = Toucher.Listener.extend({
         return wrapper.endTime - wrapper.startTime < this.maxTimeLag;
     },
 
+    "start": function(wrappers, event, controller) {
+        var index = 0;
+        var count = Math.min(wrappers.length, this.multi);
+        for (var i = 0; i < count; i++) {
+            var wrapper = wrappers[i];
+            var x = wrapper.pageX;
+            var y = wrapper.pageY;
+            if (this.onTouchStart != null) {
+                this.onTouchStart(x, y, wrapper, event, controller);
+            }
+        }
+    },
+    onTouchStart: null,
+
+    "end": function(wrappers, event, controller) {
+        var index = 0;
+        var count = Math.min(wrappers.length, this.multi);
+        for (var i = 0; i < count; i++) {
+            var wrapper = wrappers[i];
+            var x = wrapper.endPageX;
+            var y = wrapper.endPageY;
+            if (this.onTouchEnd != null) {
+                this.onTouchEnd(x, y, wrapper, event, controller);
+            }
+            if (this.checkMoveDistance(wrapper) && this.checkTimeLag(wrapper)) {
+                wrapper.index = index++;
+                this.onTap(x, y, wrapper, event, controller);
+            }
+        }
+    },
+    onTouchEnd: null,
+
     /* Implement by user */
-    onTap: function(x, y, wrappers, event, controller) {
+    onTap: function(x, y, wrapper, event, controller) {
 
     }
 

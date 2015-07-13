@@ -42,13 +42,11 @@ Toucher.Joybutton = Toucher.Listener.extend({
 
     onDown: function(wrapper, event, controller) {
         this.touched = true;
-        this.onTouchStart(wrapper, event, controller);
     },
 
     onUp: function(wrapper, event, controller, out) {
         this.touchId = null;
         this.touched = false;
-        this.onTouchEnd(wrapper, event, controller, out);
     },
 
 
@@ -70,7 +68,6 @@ Toucher.Joybutton = Toucher.Listener.extend({
         if (this.disabled) {
             return;
         }
-
         if (this.touchId) {
             for (var i = 0; i < wrappers.length; i++) {
                 var w = wrappers[i];
@@ -115,21 +112,5 @@ Toucher.Joybutton = Toucher.Listener.extend({
             }
         }
     },
-
-
-    /* Implement by user */
-    onTouchStart: function(wrappers, event, controller) {
-
-    },
-
-    /* Implement by user */
-    onTouchMove: function(wrappers, event, controller) {
-
-    },
-
-    /* Implement by user */
-    onTouchEnd: function(wrappers, event, controller) {
-
-    }
 
 });

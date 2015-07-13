@@ -240,8 +240,8 @@ var Toucher = Toucher || {};
             // console.log("cancel", this.listenerList.length)
             for (var i = 0, len = this.listenerList.length; i < len; i++) {
                 var listener = this.listenerList[i];
-                if (listener.cancel != null) {
-                    if (listener.cancel(null, event, this) === false) {
+                if (listener["cancel"] != null) {
+                    if (listener["cancel"](null, event, this) === false) {
                         break;
                     }
                 }
@@ -279,7 +279,7 @@ var Toucher = Toucher || {};
 
                 this.touched[touchId] = touchWrapper;
                 this.touchedCount++;
-                touchWrapper.start(touch, event);
+                touchWrapper["start"](touch, event);
                 startWrappers.push(touchWrapper);
 
                 var _touches = this.startTouches;
@@ -314,7 +314,7 @@ var Toucher = Toucher || {};
                         _touches.push(touchWrapper);
                     }
 
-                    touchWrapper.move(touch, event);
+                    touchWrapper["move"](touch, event);
                     moveWrappers.push(touchWrapper);
 
                 }
@@ -344,7 +344,7 @@ var Toucher = Toucher || {};
                 if (!_touched[touchId]) {
                     var touchWrapper = this.touched[touchId];
                     if (touchWrapper) {
-                        touchWrapper.end(touch, event);
+                        touchWrapper["end"](touch, event);
 
                         delete this.touched[touchId];
                         this.touchedCount--;

@@ -72,7 +72,6 @@ Toucher.Joystick = Toucher.Joybutton.extend({
                 } else {
                     this.updateMove();
                 }
-                this.onTouchStart(w, event, controller);
                 break;
             }
         }
@@ -87,9 +86,7 @@ Toucher.Joystick = Toucher.Joybutton.extend({
             if (this.touchId === w.id) {
                 this.pageX = w.pageX;
                 this.pageY = w.pageY;
-                if (this.updateMove()) {
-                    this.onTouchMove(w, event, controller);
-                }
+                this.updateMove();
                 break;
             }
         }
@@ -141,7 +138,6 @@ Toucher.Joystick = Toucher.Joybutton.extend({
             var wrapper = wrappers[i];
             if (this.touchId === wrapper.id) {
                 this.reset();
-                this.onTouchEnd(wrapper, event, controller);
                 break;
             }
         }
