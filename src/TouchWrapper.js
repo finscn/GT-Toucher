@@ -88,8 +88,8 @@
             // this.lastClientY = this.clientY;
 
             this.target = rawTouch.target;
-            this.pageX = (rawTouch.pageX + this.offsetX) * this.pixelRatio;
-            this.pageY = (rawTouch.pageY + this.offsetY) * this.pixelRatio;
+            this.pageX = rawTouch.pageX * this.pixelRatio + this.offsetX;
+            this.pageY = rawTouch.pageY * this.pixelRatio + this.offsetY;
             // this.clientX = rawTouch.clientX * this.pixelRatio;
             // this.clientY = rawTouch.clientY * this.pixelRatio;
 

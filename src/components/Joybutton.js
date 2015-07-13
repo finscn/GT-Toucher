@@ -33,8 +33,7 @@ Toucher.Joybutton = Toucher.Listener.extend({
         if (!this.touchRegion) {
             return true;
         }
-        var pixelRatio = this.controller.pixelRatio;
-        return this.isInRect(this.touchRegion, x / pixelRatio, y / pixelRatio);
+        return this.isInRect(this.touchRegion, x, y);
     },
 
     isInRect: function(rect, x, y) {
