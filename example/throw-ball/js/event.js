@@ -37,7 +37,7 @@ function initTouchController() {
         end: function() {
             // game.selectBall = null
         },
-        onPan: function(dx, dy, x, y, sx, sy, wrappers, event, controller) {
+        onPan: function(dx, dy, x, y, wrapper, event, controller) {
             if (game.selectBall) {
                 game.selectBall.moveBy(dx, dy);
             }
@@ -46,20 +46,16 @@ function initTouchController() {
 
     swipe = new Toucher.Swipe({
 
+        minDistance: 40,
+
         filterWrapper: function(type, wrapper, event, controller) {
             return wrapper.target.id == "canvas";
         },
 
-        onSwipe: function(disX, disY, time, wrappers, event, controller) {
-            // tap事件要执行的动作
-            var w = wrappers[0];
-            // var dx = w.deltaX,
-            //     dy = w.deltaY;
-            var vx = disX / time,
-                vy = disY / time
-            console.log(vx,vy)
-            if (Math.abs(vx) > 0.01 && Math.abs(vy) > 0.01 && game.selectBall) {
-                var rad = Math.atan2(vy, vx);
+        onSwipe: function(velX, velY, wrapper, event, controller) {
+            $id("info").innerHTML = "vel: " + velX.toFixed(4) + "," + velY.toFixed(4);
+            if ((Math.abs(velX) > 0.38 || Math.abs(velY) > 0.38) && game.selectBall) {
+                var rad = Math.atan2(velY, velX);
                 game.selectBall.throw(rad);
                 game.selectBall = null;
             }
