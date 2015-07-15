@@ -1,3 +1,8 @@
+**由于最近对项目做了较大的重构, 所以现在的example里, 只有joystick可正常使用.其他示例近期会更新.**
+
+---------------
+
+
 GT-Toucher -- A Multi Touch Tool for Browser
 =========================
 
