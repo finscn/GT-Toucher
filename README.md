@@ -2,6 +2,10 @@
 
 ** example 已经可运行 **
 
+基本手势: <http://fattyboy.cn/repo/GT-Toucher/example/basic/basic.html>
+
+虚拟摇杆: <http://fattyboy.cn/repo/GT-Toucher/example/joystick/index.html>
+
 ---------------
 
 
