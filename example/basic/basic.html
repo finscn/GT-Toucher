@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
-<title>Hold</title>
+<title>Tap</title>
 
 
 <style>
@@ -37,19 +37,39 @@
     div {
         font-size:18px;
     }
-
-    #holdArea {
+    #info {
         position: absolute;
-        left:100px;
+        top: 0;
+        right:0;
+        padding:4px;
+        width: 90%;
+        height: 60px;
+        overflow: hidden;
+        border:1px solid #dddddd;
+    }
+    .test-area > div {
+        position: absolute;
+        left:50px;
         top:100px;
         width : 240px;
-        height : 80px;
+        height : 100px;
         padding : 10px;
         margin : 0px;
-        background-color : white;
+        background-color : rgba(150,200,255,0.8);
         border : 1px solid blue;
         color : black;
     }
+
+#tapArea{
+    top: 80px;
+}
+#pinchArea{
+    top: 220px;
+}
+#rotateArea{
+    top: 360px;
+}
+
 </style>
 
 <script src="../../src/Controller.js"></script>
@@ -57,58 +77,15 @@
 <script src="../../src/Listener.js"></script>
 
 <script src="../../src/gesture/Tap.js"></script>
-<script src="../../src/gesture/Hold.js"></script>
+<script src="../../src/gesture/Pan.js"></script>
+<script src="../../src/gesture/Swipe.js"></script>
+<script src="../../src/gesture/Pinch.js"></script>
+<script src="../../src/gesture/Rotate.js"></script>
+
+<script src="basic-gesture.js"></script>
 
 
 <script>
-
-
-var dom;
-window.onload=function(){
-    dom=$id("holdArea");
-    dom.x=dom.offsetLeft;
-    dom.y=dom.offsetTop;
-    controller.init();
-    //把自定义事件注册到controller里
-    controller.addListener(hold);
-
-    setInterval(function(){
-        $id("info").innerHTML="Hole time: "+hold.getDuration();
-    },20)
-}
-
-function $id(id){
-    return document.getElementById(id);
-}
-
-var controller=new Toucher.Controller({
-    preventDefaultMove: true,
-    beforeInit : function(){
-        this.dom=document.body;
-    }
-});
-
-
-////////////////////////////////////
-////////////////////////////////////
-////////////////////////////////////
-////////////////////////////////////
-////////////////////////////////////
-
-
-
-//创建一个tap listener的实例
-var hold=new Toucher.Hold({
-
-    filterWrapper: function(type, wrapper, event, controller) {
-        // 只有点击了 id==tapArea 的dom对象,才会触发这个事件
-        // 条件可以是任意,不仅仅局限于dom的判断, 例如可以是点击的区域坐标 时间等等,
-        // 甚至可以和点击事件无关
-        return wrapper.target.id=="holdArea";
-    },
-
-});
-
 
 
 
@@ -117,7 +94,11 @@ var hold=new Toucher.Hold({
 </head>
 <body >
 <div id="info">info</div>
-<div id="holdArea"> please hold me </div>
+<div class="test-area">
+<div id="tapArea"> tap/pan me </div>
+<div id="pinchArea"> scale me </div>
+<div id="rotateArea"> swipe/rotate me </div>
+</div>
 </body>
 
 </html>
