@@ -59,6 +59,21 @@ var Toucher = Toucher || {};
         },
         onInit: function() {},
 
+        // triggerEvent: function(eventName, wrappers, event, controller) {
+        //     if (!this[eventName]) {
+        //         return;
+        //     }
+        //     var index = 0;
+        //     var count = Math.min(wrappers.length, this.multi);
+        //     for (var i = 0; i < count; i++) {
+        //         var wrapper = wrappers[i];
+        //         var x = wrapper.pageX;
+        //         var y = wrapper.pageY;
+        //         wrapper.index = index++;
+        //         this[eventName](x, y, wrapper, event, controller);
+        //     }
+        // },
+
         /* Could be overridden by user */
         filterWrappers: function(type, wrappers, event, controller) {
             var validWrappers = [];
@@ -75,21 +90,6 @@ var Toucher = Toucher || {};
         filterWrapper: function(type, wrapper, event, controller) {
             return false;
         },
-
-        // triggerEvent: function(eventName, wrappers, event, controller) {
-        //     if (!this[eventName]) {
-        //         return;
-        //     }
-        //     var index = 0;
-        //     var count = Math.min(wrappers.length, this.multi);
-        //     for (var i = 0; i < count; i++) {
-        //         var wrapper = wrappers[i];
-        //         var x = wrapper.pageX;
-        //         var y = wrapper.pageY;
-        //         wrapper.index = index++;
-        //         this[eventName](x, y, wrapper, event, controller);
-        //     }
-        // },
 
         /* Implement by user */
 
@@ -113,6 +113,7 @@ var Toucher = Toucher || {};
         onTouchCancel: null,
 
     };
+
 
     for (var p in proto) {
         Listener.prototype[p] = proto[p];

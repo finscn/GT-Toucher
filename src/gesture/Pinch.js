@@ -1,17 +1,17 @@
 "use strict";
 
-Toucher.Rotate = Toucher.Listener.extend({
+Toucher.Pinch = Toucher.Listener.extend({
 
     touchA: null,
     touchB: null,
-    startDistance: -1,
+    startDistance: null,
 
     /* Could be overridden by user */
     filterWrapper: function(type, wrapper, event, controller) {
         return true;
     },
     /* Implement by user */
-    onRotate: function(currentDistance, startDistance, wrappers, event, controller) {
+    onPinch: function(currentDistance, startDistance, wrappers, event, controller) {
 
     },
 
@@ -29,7 +29,7 @@ Toucher.Rotate = Toucher.Listener.extend({
         if (this.touchA && this.touchB) {
             var disX = (this.touchB.startPageX - this.touchA.startPageX);
             var disY = (this.touchB.startPageY - this.touchA.startPageY);
-            this.startAngle = Math.atan2(disY, disX);
+            this.startDistance = Math.sqrt(disX * disX + disY * disY);
         }
     },
 
@@ -42,9 +42,9 @@ Toucher.Rotate = Toucher.Listener.extend({
 
         var disX = (touchB.pageX - touchA.pageX);
         var disY = (touchB.pageY - touchA.pageY);
-        var currentAngle = Math.atan2(disY, disX);
+        var currentDistance = Math.sqrt(disX * disX + disY * disY);
 
-        this.onRotate(currentAngle, this.startAngle, [touchA, touchB], event, controller);
+        this.onPinch(currentDistance, this.startDistance, [touchA, touchB], event, controller);
     },
 
     "end": function(wrappers, event, controller) {
@@ -59,15 +59,14 @@ Toucher.Rotate = Toucher.Listener.extend({
             }
         }
         if (!this.touchA || !this.touchB) {
-            this.startAngle = null;
+            this.startDistance = null;
         }
     },
 
     "cancel": function(wrappers, event, controller) {
         this.touchA = null;
         this.touchB = null;
-        this.startAngle = null;
+        this.startDistance = null;
     },
-
 
 });

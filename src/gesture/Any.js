@@ -2,10 +2,6 @@
 
 Toucher.Any = Toucher.Listener.extend({
 
-    filterWrappers: function(type, wrappers, event, controller) {
-        return true;
-    },
-
     filterWrapper: function(type, wrappers, event, controller) {
         return true;
     },

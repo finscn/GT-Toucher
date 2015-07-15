@@ -5,9 +5,16 @@ Toucher.Swipe = Toucher.Listener.extend({
     minDistance: 50,
     maxTime: 1000,
 
+    /* Could be overridden by user */
     filterWrapper: function(type, wrapper, event, controller) {
         return true;
     },
+    /* Implement by user */
+    onSwipe: function(velX, velY, wrapper, event, controller) {
+
+    },
+    /* Implement by user */
+    onTouchEnd: null,
 
     "end": function(wrappers, event, controller) {
         var index = 0;
@@ -26,10 +33,7 @@ Toucher.Swipe = Toucher.Listener.extend({
             }
             var disX = (x - wrapper.startPageX);
             var disY = (y - wrapper.startPageY);
-            // var dis=Math.sqrt(disX*disX+disY*disY);
-            // if (dis<this.minDistance){
-            //  return;
-            // }
+
             if (Math.abs(disX) < this.minDistance && Math.abs(disY) < this.minDistance) {
                 continue;
             }
@@ -39,11 +43,6 @@ Toucher.Swipe = Toucher.Listener.extend({
             this.onSwipe(velX, velY, wrapper, event, controller);
         }
     },
-    onTouchEnd: null,
 
-    /* Implement by user */
-    onSwipe: function(velX, velY, wrapper, event, controller) {
-
-    }
 
 });

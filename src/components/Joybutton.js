@@ -30,14 +30,11 @@ Toucher.Joybutton = Toucher.Listener.extend({
     },
 
     isOnMe: function(x, y) {
-        if (!this.touchRegion) {
+        var r = this.touchRegion;
+        if (!r) {
             return true;
         }
-        return this.isInRect(this.touchRegion, x, y);
-    },
-
-    isInRect: function(rect, x, y) {
-        return rect && rect[0] < x && x < rect[2] && rect[1] < y && y < rect[3];
+        return r[0] < x && x < r[2] && r[1] < y && y < r[3];
     },
 
     onDown: function(wrapper, event, controller) {

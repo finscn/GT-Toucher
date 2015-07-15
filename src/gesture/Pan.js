@@ -4,8 +4,13 @@ Toucher.Pan = Toucher.Listener.extend({
 
     valid: false,
 
+    /* Could be overridden by user */
     filterWrapper: function(type, wrapper, event, controller) {
         return true;
+    },
+    /* Implement by user */
+    onPan: function(dx, dy, x, y, wrapper, event, controller) {
+
     },
 
     "move": function(wrappers, event, controller) {
@@ -22,9 +27,5 @@ Toucher.Pan = Toucher.Listener.extend({
         }
     },
 
-    /* Implement by user */
-    onPan: function(dx, dy, x, y, wrapper, event, controller) {
-
-    }
 
 });

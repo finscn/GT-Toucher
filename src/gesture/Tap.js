@@ -5,9 +5,18 @@ Toucher.Tap = Toucher.Listener.extend({
     maxTimeLag: 800,
     maxDistance: 15,
 
+    /* Could be overridden by user */
     filterWrapper: function(type, wrapper, event, controller) {
         return true;
     },
+    /* Implement by user */
+    onTap: function(x, y, wrapper, event, controller) {
+
+    },
+    /* Implement by user */
+    onTouchStart: null,
+    /* Implement by user */
+    onTouchEnd: null,
 
     checkMoveDistance: function(wrapper) {
         var dx = Math.abs(wrapper.moveAmountX);
@@ -20,18 +29,17 @@ Toucher.Tap = Toucher.Listener.extend({
     },
 
     "start": function(wrappers, event, controller) {
-        var index = 0;
+        if (!this.onTouchStart) {
+            return;
+        }
         var count = Math.min(wrappers.length, this.multi);
         for (var i = 0; i < count; i++) {
             var wrapper = wrappers[i];
             var x = wrapper.pageX;
             var y = wrapper.pageY;
-            if (this.onTouchStart != null) {
-                this.onTouchStart(x, y, wrapper, event, controller);
-            }
+            this.onTouchStart(x, y, wrapper, event, controller);
         }
     },
-    onTouchStart: null,
 
     "end": function(wrappers, event, controller) {
         var index = 0;
@@ -49,11 +57,6 @@ Toucher.Tap = Toucher.Listener.extend({
             }
         }
     },
-    onTouchEnd: null,
 
-    /* Implement by user */
-    onTap: function(x, y, wrapper, event, controller) {
-
-    }
 
 });
