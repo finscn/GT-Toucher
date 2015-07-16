@@ -23,24 +23,22 @@ Toucher.Swipe = Toucher.Listener.extend({
             var wrapper = wrappers[i];
             var x = wrapper.endPageX;
             var y = wrapper.endPageY;
+
+            var time = (wrapper.endTime - wrapper.startTime);
+            if (time <= this.maxTime) {
+                var disX = (x - wrapper.startPageX);
+                var disY = (y - wrapper.startPageY);
+                if (Math.abs(disX) >= this.minDistance || Math.abs(disY) >= this.minDistance) {
+                    var velX = disX / time;
+                    var velY = disY / time;
+                    wrapper.index = index++;
+                    this.onSwipe(velX, velY, wrapper, event, controller);
+                }
+            }
+
             if (this.onTouchEnd != null) {
                 this.onTouchEnd(x, y, wrapper, event, controller);
             }
-
-            var time = (wrapper.endTime - wrapper.startTime);
-            if (time > this.maxTime) {
-                continue;
-            }
-            var disX = (x - wrapper.startPageX);
-            var disY = (y - wrapper.startPageY);
-
-            if (Math.abs(disX) < this.minDistance && Math.abs(disY) < this.minDistance) {
-                continue;
-            }
-            var velX = disX / time;
-            var velY = disY / time;
-            wrapper.index = index++;
-            this.onSwipe(velX, velY, wrapper, event, controller);
         }
     },
 

@@ -48,12 +48,12 @@ Toucher.Tap = Toucher.Listener.extend({
             var wrapper = wrappers[i];
             var x = wrapper.endPageX;
             var y = wrapper.endPageY;
-            if (this.onTouchEnd != null) {
-                this.onTouchEnd(x, y, wrapper, event, controller);
-            }
             if (this.checkMoveDistance(wrapper) && this.checkTimeLag(wrapper)) {
                 wrapper.index = index++;
                 this.onTap(x, y, wrapper, event, controller);
+            }
+            if (this.onTouchEnd != null) {
+                this.onTouchEnd(x, y, wrapper, event, controller);
             }
         }
     },
