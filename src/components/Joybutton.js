@@ -3,7 +3,7 @@ Toucher.Joybutton = Toucher.Listener.extend({
     touchId: null,
     disabled: false,
     touchRegion: null,
-    dynamic: false,
+    floating: false,
 
     buttonX: 0,
     buttonY: 0,

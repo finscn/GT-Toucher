@@ -66,7 +66,7 @@ Toucher.Joystick = Toucher.Joybutton.extend({
                 this.touched = true;
                 this.pageX = w.pageX;
                 this.pageY = w.pageY;
-                if (this.dynamic) {
+                if (this.floating) {
                     this.stickX = w.startPageX;
                     this.stickY = w.startPageY;
                 } else {

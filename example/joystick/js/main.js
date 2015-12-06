@@ -1,5 +1,5 @@
 var Config = {
-    dynamic: false, // true,
+    floating: false, // true,
     sensitive: false, // true,
     maxMoveRadius: 85,
     minMoveRadius: 20,
@@ -177,7 +177,7 @@ function initTouchController() {
         minMoveRadius: Config.minMoveRadius,
         maxMoveRadius: Config.maxMoveRadius,
 
-        dynamic: Config.dynamic,
+        floating: Config.floating,
         followSpeed: Config.followSpeed, // 0 is not follow
         followDistance: Config.followDistance,
         warningEdge: Config.warningEdge
@@ -219,7 +219,7 @@ window.onload = function() {
 
 
 function initConfig() {
-    var dynamic = $id("dynamic");
+    var floating = $id("floating");
     var sensitive = $id("sensitive");
 
     var maxMoveRadius = $id("maxMoveRadius");
@@ -237,7 +237,7 @@ function initConfig() {
     var warningEdge = $id("warningEdge");
     var warningEdgeValue = $id("warningEdgeValue");
 
-    dynamic.checked = Config.dynamic;
+    floating.checked = Config.floating;
     sensitive.checked = Config.sensitive;
 
     maxMoveRadius.value = Config.maxMoveRadius;
@@ -255,9 +255,9 @@ function initConfig() {
     warningEdge.value = Config.warningEdge;
     warningEdgeValue.innerHTML = warningEdge.value;
 
-    dynamic.onchange = function() {
-        Config.dynamic = this.checked;
-        joystick.dynamic = this.checked;
+    floating.onchange = function() {
+        Config.floating = this.checked;
+        joystick.floating = this.checked;
         joystick.updateConfig();
     };
     sensitive.onchange = function() {
