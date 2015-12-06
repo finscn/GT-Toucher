@@ -22,12 +22,13 @@ Toucher.Joystick = Toucher.Joybutton.extend({
     followSpeed: 0, // scale
     followDistance: 0, // scale
 
+    sensitive: false,
+    strength: 0,
     scale: 1,
 
-    // TODO
-    // warningEdge: false,
-    // screenWidth: 0,
-    // screenHeight: 0,
+    warningEdge: 0,
+    screenWidth: 0,
+    screenHeight: 0,
 
     init: function() {
         this.beforeInit();
@@ -179,6 +180,54 @@ Toucher.Joystick = Toucher.Joybutton.extend({
         this.stickX += this.cos * step;
         this.stickY += this.sin * step;
 
-    }
+    },
+
+    update: function(timeStep, now) {
+        if (this.moveRadius < this.minMoveRadius) {
+            this.strength = 0;
+            return;
+        }
+
+        this.followTouch(timeStep);
+
+        if (this.sensitive) {
+            this.strength = (this.moveRadius - this.minMoveRadius) / (this.maxMoveRadius - this.minMoveRadius);
+        } else {
+            this.strength = 1;
+        }
+
+    },
+
+    render: function(context, timeStep, now) {
+
+        if (!this.touched) {
+            // return;
+        }
+
+        var x = this.stickX,
+            y = this.stickY;
+
+        context.fillStyle = "rgba(0,0,0,0.5)";
+        context.beginPath();
+        context.arc(x, y, this.maxMoveRadius, 0, Math.PI * 2);
+        context.stroke();
+        context.closePath();
+
+        if (this.minMoveRadius > 0) {
+            context.fillStyle = "rgba(255,100,100,0.4)";
+            context.beginPath();
+            context.arc(x, y, this.minMoveRadius, 0, Math.PI * 2);
+            context.fill();
+            context.closePath();
+        }
+
+        context.fillStyle = "rgba(0,0,0,0.2)";
+        context.beginPath();
+        context.arc(x + this.moveX, y + this.moveY, 35, 0, Math.PI * 2);
+        context.fill();
+        context.closePath();
+
+
+    },
 
 });
