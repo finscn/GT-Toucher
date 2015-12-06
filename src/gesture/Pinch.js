@@ -11,9 +11,10 @@ Toucher.Pinch = Toucher.Listener.extend({
         return true;
     },
     /* Implement by user */
-    onPinch: function(currentDistance, startDistance, wrappers, event, controller) {
+    onPinch: function(distance, lastDistance, startDistance, centerPoint, wrappers, event, controller) {
 
     },
+    onPinchEnd: null,
 
     "start": function(wrappers, event, controller) {
         for (var i = 0; i < wrappers.length; i++) {
@@ -30,6 +31,8 @@ Toucher.Pinch = Toucher.Listener.extend({
             var disX = (this.touchB.startPageX - this.touchA.startPageX);
             var disY = (this.touchB.startPageY - this.touchA.startPageY);
             this.startDistance = Math.sqrt(disX * disX + disY * disY);
+            this.centerX = (this.touchA.startPageX + this.touchB.startPageX) >> 1;
+            this.centerY = (this.touchA.startPageY + this.touchB.startPageY) >> 1;
         }
     },
 
@@ -40,11 +43,15 @@ Toucher.Pinch = Toucher.Listener.extend({
             return;
         }
 
+        var disX = (touchB.lastPageX - touchA.lastPageX);
+        var disY = (touchB.lastPageY - touchA.lastPageY);
+        var lastDistance = Math.sqrt(disX * disX + disY * disY);
+
         var disX = (touchB.pageX - touchA.pageX);
         var disY = (touchB.pageY - touchA.pageY);
-        var currentDistance = Math.sqrt(disX * disX + disY * disY);
+        var distance = Math.sqrt(disX * disX + disY * disY);
 
-        this.onPinch(currentDistance, this.startDistance, [touchA, touchB], event, controller);
+        this.onPinch(distance, lastDistance, this.startDistance, [this.centerX, this.centerY], [touchA, touchB], event, controller);
     },
 
     "end": function(wrappers, event, controller) {
@@ -60,6 +67,9 @@ Toucher.Pinch = Toucher.Listener.extend({
         }
         if (!this.touchA || !this.touchB) {
             this.startDistance = null;
+            if (this.onPinchEnd != null) {
+                this.onPinchEnd(wrappers, event, controller);
+            }
         }
     },
 
