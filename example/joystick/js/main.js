@@ -165,14 +165,14 @@ function initTouchController() {
     });
     controller.init();
 
-    joystick = new Toucher.Joystick({
+    joystick = new Toucher.TouchStick({
         disabled: false,
         touchRegion: [0, 100, game.width / 2, game.height],
         wayCount: null,
         stickX: 150,
         stickY: game.height - 150,
-        defaultStickX: 150,
-        defaultStickY: game.height - 150,
+        defaultX: 150,
+        defaultY: game.height - 150,
 
         minMoveRadius: Config.minMoveRadius,
         maxMoveRadius: Config.maxMoveRadius,
@@ -193,8 +193,8 @@ window.onresize = function() {
     game.height = window.innerHeight;
     game.canvas.width = game.width;
     game.canvas.height = game.height;
-    joystick.defaultStickY = game.height - 150;
-    joystick.stickY = joystick.defaultStickY;
+    joystick.defaultY = game.height - 150;
+    joystick.stickY = joystick.defaultY;
     joystick.touchRegion = [0, 100, game.width / 2, game.height];
 };
 

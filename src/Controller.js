@@ -110,7 +110,8 @@ var Toucher = Toucher || {};
             var dom = this.dom;
 
             var Me = this;
-            dom.addEventListener(this.EVENT.START, function(event) {
+
+            this._startHook = function(event) {
                 Me.touchCount++;
                 var now = Date.now();
                 if (Me.useMouse === true) {
@@ -123,9 +124,10 @@ var Toucher = Toucher || {};
                 if (Me.preventDefaultStart || Me.preventDefault) {
                     event.preventDefault();
                 }
-            }, this.useCapture);
+            };
+            dom.addEventListener(this.EVENT.START, this._startHook, this.useCapture);
 
-            dom.addEventListener(this.EVENT.MOVE, function(event) {
+            this._moveHook = function(event) {
                 var now = Date.now();
                 if (now - Me.moveTick < Me.moveInterval || Me.beforeMove !== null && Me.beforeMove(event, now) === false) {
                     return;
@@ -135,9 +137,10 @@ var Toucher = Toucher || {};
                 if (Me.preventDefaultMove || Me.preventDefault) {
                     event.preventDefault();
                 }
-            }, this.useCapture);
+            };
+            dom.addEventListener(this.EVENT.MOVE, this._moveHook, this.useCapture);
 
-            var endFun = function(event) {
+            this._endHook = function(event) {
                 Me.touchCount--;
                 var now = Date.now();
                 if (Me.beforeEnd !== null && Me.beforeEnd(event, now) === false) {
@@ -148,19 +151,20 @@ var Toucher = Toucher || {};
                     event.preventDefault();
                 }
             };
-            dom.addEventListener(this.EVENT.END, endFun, this.useCapture);
+            dom.addEventListener(this.EVENT.END, this._endHook, this.useCapture);
 
             if (this.useMouse === true) {
-                window.addEventListener("mouseout", function(event) {
+                this._outHook = function(event) {
                     Me.touchCount--;
                     var from = event.relatedTarget || event.toElement;
                     if (!from || from.nodeName === "HTML") {
-                        endFun(event);
+                        Me._endHook(event);
                     }
                     event.preventDefault();
-                }, false);
+                };
+                window.addEventListener("mouseout", this._outHook, false);
             } else {
-                dom.addEventListener(this.EVENT.CANCEL, function(event) {
+                this._cancelHook = function(event) {
                     console.log("===== " + Me.EVENT.CANCEL + " =====");
                     Me.touchCount--;
                     var now = Date.now();
@@ -172,23 +176,23 @@ var Toucher = Toucher || {};
                     if (Me.preventDefaultCancel || Me.preventDefault) {
                         event.preventDefault();
                     }
-                }, this.useCapture);
+                };
+                dom.addEventListener(this.EVENT.CANCEL, this._cancelHook, this.useCapture);
             }
 
             if (this.useMouse === false && this.ignoreNativeGesture) {
                 // gesturestart, gesturechange, gestureend
                 if ("ongesturestart" in window) {
-                    window.addEventListener("gesturestart", function(event) {
+                    this._gestureHook = function(event) {
                         event.preventDefault();
-                    }, false);
-                    window.addEventListener("gesturechange", function(event) {
-                        event.preventDefault();
-                    }, false);
-                    window.addEventListener("gestureend", function(event) {
-                        event.preventDefault();
-                    }, false);
+                    };
+                    window.addEventListener("gesturestart", this._gestureHook, false);
+                    window.addEventListener("gesturechange", this._gestureHook, false);
+                    window.addEventListener("gestureend", this._gestureHook, false);
                 }
             }
+
+            this.updateDomOffset();
 
             this.onInit();
         },
@@ -211,6 +215,38 @@ var Toucher = Toucher || {};
             }
         },
 
+        updateDomOffset: function(dom) {
+            var dom = this.dom;
+            var offsetLeft = 0,
+                offsetTop = 0;
+            if (dom === window || dom === document) {
+                offsetLeft = window.pageXOffset || 0;
+                offsetTop = window.pageYOffset || 0;
+            } else if (dom.getBoundingClientRect !== undefined) {
+                var x = window.pageXOffset,
+                    y = 0;
+                if (x || x === 0) {
+                    y = window.pageYOffset;
+                } else {
+                    x = document.body.scrollLeft || 0;
+                    y = document.body.scrollTop || 0;
+                }
+                var rect = dom.getBoundingClientRect();
+                offsetLeft = rect.left + x;
+                offsetTop = rect.top + y;
+            } else {
+                var left = dom.offsetLeft || 0,
+                    top = dom.offsetTop || 0;
+                while ((dom = dom.parentNode) && dom !== document.body && dom !== document) {
+                    left += dom.offsetLeft || 0;
+                    top += dom.offsetTop || 0;
+                }
+                offsetLeft = left;
+                offsetTop = top;
+            }
+            this.offsetLeft = offsetLeft;
+            this.offsetTop = offsetTop;
+        },
 
         beforeStart: null,
         onStart: function(event, now) {
@@ -422,6 +458,18 @@ var Toucher = Toucher || {};
                 listener.controller = null;
             }
             this.listenerList.length = 0;
+        },
+
+        destroy: function() {
+            var dom = this.dom;
+            dom.addEventListener(this.EVENT.START, this._startHook, this.useCapture);
+            dom.addEventListener(this.EVENT.MOVE, this._moveHook, this.useCapture);
+            dom.addEventListener(this.EVENT.END, this._endHook, this.useCapture);
+            window.addEventListener("mouseout", this._outHook, false);
+            dom.addEventListener(this.EVENT.CANCEL, this._cancelHook, this.useCapture);
+            window.removeEventListener("gesturestart", this._gestureHook, false);
+            window.removeEventListener("gesturechange", this._gestureHook, false);
+            window.removeEventListener("gestureend", this._gestureHook, false);
         }
 
     };
