@@ -462,11 +462,11 @@ var Toucher = Toucher || {};
 
         destroy: function() {
             var dom = this.dom;
-            dom.addEventListener(this.EVENT.START, this._startHook, this.useCapture);
-            dom.addEventListener(this.EVENT.MOVE, this._moveHook, this.useCapture);
-            dom.addEventListener(this.EVENT.END, this._endHook, this.useCapture);
-            window.addEventListener("mouseout", this._outHook, false);
-            dom.addEventListener(this.EVENT.CANCEL, this._cancelHook, this.useCapture);
+            dom.removeEventListener(this.EVENT.START, this._startHook, this.useCapture);
+            dom.removeEventListener(this.EVENT.MOVE, this._moveHook, this.useCapture);
+            dom.removeEventListener(this.EVENT.END, this._endHook, this.useCapture);
+            window.removeEventListener("mouseout", this._outHook, false);
+            dom.removeEventListener(this.EVENT.CANCEL, this._cancelHook, this.useCapture);
             window.removeEventListener("gesturestart", this._gestureHook, false);
             window.removeEventListener("gesturechange", this._gestureHook, false);
             window.removeEventListener("gestureend", this._gestureHook, false);
