@@ -461,6 +461,8 @@ var Toucher = Toucher || {};
         },
 
         destroy: function() {
+            this.reset();
+            this.removeAllListeners();
             var dom = this.dom;
             dom.removeEventListener(this.EVENT.START, this._startHook, this.useCapture);
             dom.removeEventListener(this.EVENT.MOVE, this._moveHook, this.useCapture);
