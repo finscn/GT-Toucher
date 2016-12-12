@@ -1,21 +1,25 @@
-Toucher.Joystick = Toucher.Joybutton.extend({
+"use strict";
+
+Toucher.TouchStick = Toucher.TouchButton.extend({
 
     rad: 0,
     cos: 1,
     sin: 0,
 
-    stickX: 0,
-    stickY: 0,
-    defaultStickX: null,
-    defaultStickY: null,
+    x: 0,
+    y: 0,
+    defaultX: null,
+    defaultY: null,
 
     moveX: 0,
     moveY: 0,
     moveRadius: 0,
     distance: 0,
 
+    stickRadius: 35,
     minMoveRadius: 0, // scale
     maxMoveRadius: 100, // scale
+    axesRadius: null,
 
     wayCount: 0, // 0 or null ==> full-ways
 
@@ -29,6 +33,10 @@ Toucher.Joystick = Toucher.Joybutton.extend({
     warningEdge: 0,
     screenWidth: 0,
     screenHeight: 0,
+
+    bgColor: "rgba(0,0,0,0.5)",
+    centerColor: "rgba(255,100,100,0.2)",
+    stickColor: "rgba(0,0,0,0.2)",
 
     init: function() {
         this.beforeInit();
@@ -49,10 +57,12 @@ Toucher.Joystick = Toucher.Joybutton.extend({
 
     setScale: function(scale) {
         scale = this.scale = scale || 1;
+        this.stickRadius *= scale;
         this.minMoveRadius *= scale;
         this.maxMoveRadius *= scale;
         this.followSpeed *= scale;
         this.followDistance *= scale;
+        this.axesRadius = this.maxMoveRadius;
         this.updateConfig();
     },
 
@@ -62,14 +72,14 @@ Toucher.Joystick = Toucher.Joybutton.extend({
         }
         for (var i = 0; i < wrappers.length; i++) {
             var w = wrappers[i];
-            if (this.touchId === null && this.isOnMe(w.pageX, w.pageY)) {
+            if (this.touchId === null && this.isInTouchRegion(w.pageX, w.pageY)) {
                 this.touchId = w.id;
                 this.touched = true;
                 this.pageX = w.pageX;
                 this.pageY = w.pageY;
                 if (this.floating) {
-                    this.stickX = w.startPageX;
-                    this.stickY = w.startPageY;
+                    this.x = w.startPageX;
+                    this.y = w.startPageY;
                 } else {
                     this.updateMove();
                 }
@@ -94,24 +104,30 @@ Toucher.Joystick = Toucher.Joybutton.extend({
     },
 
     updateMove: function() {
-        var dx = this.dx = this.pageX - this.stickX;
-        var dy = this.dy = this.pageY - this.stickY;
+
+        this.updateAxes(this.pageX - this.x, this.pageY - this.y);
+
+        return true;
+    },
+
+    updateAxes: function(x, y, timeStep, now) {
+        var dx = this.axesX = x;
+        var dy = this.axesY = y;
 
         if (!dx && !dy) {
+            this.strength = 0;
             this.distance = 0;
+            this.moveX = this.moveY = this.moveRadius = 0;
             return false;
         }
 
         var r = this.distance = Math.sqrt(dx * dx + dy * dy);
         if (r < this.minMoveRadius) {
-            this.moveX = this.moveY = this.moveRadius = 0;
-            return;
+            this.moveX = this.moveY = this.moveRadius = this.strength = 0;
+            return false;
         }
 
         var rad = Math.atan2(dy, dx);
-        if (rad < 0) {
-            rad += Math.PI * 2;
-        }
         if (this.wayRad) {
             rad = Math.floor(rad / this.wayRad + 0.5) * this.wayRad;
         }
@@ -128,7 +144,6 @@ Toucher.Joystick = Toucher.Joybutton.extend({
         this.moveX = dx;
         this.moveY = dy;
         this.moveRadius = r;
-        return true;
     },
 
     end: function(wrappers, event, controller) {
@@ -147,12 +162,14 @@ Toucher.Joystick = Toucher.Joybutton.extend({
     reset: function() {
         this.touchId = null;
         this.touched = false;
-        if (this.defaultStickX !== null) {
-            this.stickX = this.defaultStickX;
+        if (this.defaultX !== null) {
+            this.x = this.defaultX;
         }
-        if (this.defaultStickY !== null) {
-            this.stickY = this.defaultStickY;
+        if (this.defaultY !== null) {
+            this.y = this.defaultY;
         }
+        this.axesX = 0;
+        this.axesY = 0;
         this.pageX = 0;
         this.pageY = 0;
         this.moveX = 0;
@@ -177,12 +194,16 @@ Toucher.Joystick = Toucher.Joybutton.extend({
             step = dis;
         }
         this.distance -= step;
-        this.stickX += this.cos * step;
-        this.stickY += this.sin * step;
+        this.x += this.cos * step;
+        this.y += this.sin * step;
 
     },
 
     update: function(timeStep, now) {
+        if (this.disabled) {
+            return;
+        }
+
         if (this.moveRadius < this.minMoveRadius) {
             this.strength = 0;
             return;
@@ -199,34 +220,35 @@ Toucher.Joystick = Toucher.Joybutton.extend({
     },
 
     render: function(context, timeStep, now) {
-
+        if (!this.visible) {
+            return;
+        }
         if (!this.touched) {
             // return;
         }
 
-        var x = this.stickX,
-            y = this.stickY;
+        var x = this.x,
+            y = this.y;
 
-        context.fillStyle = "rgba(0,0,0,0.5)";
+        context.strokeStyle = this.bgColor;
         context.beginPath();
         context.arc(x, y, this.maxMoveRadius, 0, Math.PI * 2);
-        context.stroke();
         context.closePath();
+        context.stroke();
 
         if (this.minMoveRadius > 0) {
-            context.fillStyle = "rgba(255,100,100,0.4)";
+            context.fillStyle = this.centerColor;
             context.beginPath();
             context.arc(x, y, this.minMoveRadius, 0, Math.PI * 2);
-            context.fill();
             context.closePath();
+            context.fill();
         }
 
-        context.fillStyle = "rgba(0,0,0,0.2)";
+        context.fillStyle = this.stickColor;
         context.beginPath();
-        context.arc(x + this.moveX, y + this.moveY, 35, 0, Math.PI * 2);
-        context.fill();
+        context.arc(x + this.moveX, y + this.moveY, this.stickRadius, 0, Math.PI * 2);
         context.closePath();
-
+        context.fill();
 
     },
 

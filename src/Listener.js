@@ -6,20 +6,18 @@ var Toucher = Toucher || {};
 
     var CONST = exports.CONST;
 
-    var Listener = function(cfg) {
-
-        for (var property in cfg) {
-            this[property] = cfg[property];
+    var Listener = function(options) {
+        for (var property in options) {
+            this[property] = options[property];
         }
-
     };
 
     // Use duck-type, GT-Toucher doesn't care the result of "instanceof"
     /* Use to create your custom-listener */
     Listener.extend = function(prototype) {
-        var subclass = function(cfg) {
-            for (var property in cfg) {
-                this[property] = cfg[property];
+        var subclass = function(options) {
+            for (var property in options) {
+                this[property] = options[property];
             }
         };
         var cp = subclass.prototype;
@@ -43,9 +41,6 @@ var Toucher = Toucher || {};
         id: null,
         type: null,
 
-        offsetLeft: 0,
-        offsetTop: 0,
-
         order: 1,
         multi: 1,
 
@@ -58,6 +53,10 @@ var Toucher = Toucher || {};
             this.onInit();
         },
         onInit: function() {},
+
+        reset: function() {
+            /* Implement by user */
+        },
 
         // triggerEvent: function(eventName, wrappers, event, controller) {
         //     if (!this[eventName]) {

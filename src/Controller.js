@@ -6,7 +6,7 @@ var Toucher = Toucher || {};
 
     // var TouchWrapper = exports.TouchWrapper;
 
-    var CONST = {} ;
+    var CONST = {};
     CONST.EVENT_LIST = ["touches", "changedTouches", "targetTouches"];
     CONST.touches = "touches";
     CONST.changedTouches = "changedTouches";
@@ -31,13 +31,18 @@ var Toucher = Toucher || {};
         dom: document,
 
         pixelRatio: 1,
-        offsetX: 0,
-        offsetY: 0,
         offsetLeft: 0,
         offsetTop: 0,
+        canvasWidth: 0,
+        canvasHeight: 0,
+        orientation: 0,
+
+        offsetX: 0,
+        offsetY: 0,
 
         supportMultiTouch: false,
-        useMouse: false,
+        useMouse: null,
+        useTouch: null,
         useCapture: true,
         preventDefault: false, // is preventDefault All
 
@@ -57,44 +62,58 @@ var Toucher = Toucher || {};
 
         moveTick: 0,
         moveInterval: 0,
+        touchCount: 0,
+        touchedCount: 0,
+
 
         beforeInit: function() {},
         init: function() {
 
             this.listenerList = [];
+            this.EVENT = {};
 
             this.reset();
 
             this.beforeInit();
 
-            var dom = this.dom;
-            this.updateDomOffset();
-
             this.supportMultiTouch = "ontouchstart" in this.dom;
-            if (!this.supportMultiTouch) {
+            if (this.supportMultiTouch && this.useTouch !== false) {
+                this.useTouch = true;
+            } else {
+                this.useTouch = false;
+            }
+            if (!this.supportMultiTouch && this.useMouse !== false) {
                 this.useMouse = true;
+            } else {
+                this.useMouse = false;
             }
 
-            if (this.useMouse) {
-                // CONST.NOT_START = null;
-                CONST.START = "mousedown";
-                CONST.MOVE = "mousemove";
-                CONST.END = "mouseup";
-                // no mouse cancel
-                CONST.CANCEL = null;
-            } else {
-                // CONST.NOT_START = null;
-                CONST.START = "touchstart";
-                CONST.MOVE = "touchmove";
-                CONST.END = "touchend";
-                CONST.CANCEL = "touchcancel";
+            if (this.useTouch === false && this.useMouse === false) {
+                return;
             }
+
+            if (this.useMouse === true) {
+                // this.EVENT.NOT_START = null;
+                this.EVENT.START = "mousedown";
+                this.EVENT.MOVE = "mousemove";
+                this.EVENT.END = "mouseup";
+                // no mouse cancel
+                this.EVENT.CANCEL = null;
+            } else {
+                // this.EVENT.NOT_START = null;
+                this.EVENT.START = "touchstart";
+                this.EVENT.MOVE = "touchmove";
+                this.EVENT.END = "touchend";
+                this.EVENT.CANCEL = "touchcancel";
+            }
+
+            var dom = this.dom;
 
             var Me = this;
-
-            dom.addEventListener(CONST.START, function(event) {
+            dom.addEventListener(this.EVENT.START, function(event) {
+                Me.touchCount++;
                 var now = Date.now();
-                if (Me.useMouse) {
+                if (Me.useMouse === true) {
                     Me.reset();
                 }
                 if (Me.beforeStart !== null && Me.beforeStart(event, now) === false) {
@@ -106,7 +125,7 @@ var Toucher = Toucher || {};
                 }
             }, this.useCapture);
 
-            dom.addEventListener(CONST.MOVE, function(event) {
+            dom.addEventListener(this.EVENT.MOVE, function(event) {
                 var now = Date.now();
                 if (now - Me.moveTick < Me.moveInterval || Me.beforeMove !== null && Me.beforeMove(event, now) === false) {
                     return;
@@ -119,6 +138,7 @@ var Toucher = Toucher || {};
             }, this.useCapture);
 
             var endFun = function(event) {
+                Me.touchCount--;
                 var now = Date.now();
                 if (Me.beforeEnd !== null && Me.beforeEnd(event, now) === false) {
                     return;
@@ -128,23 +148,26 @@ var Toucher = Toucher || {};
                     event.preventDefault();
                 }
             };
-            dom.addEventListener(CONST.END, endFun, this.useCapture);
+            dom.addEventListener(this.EVENT.END, endFun, this.useCapture);
 
-            if (this.useMouse) {
+            if (this.useMouse === true) {
                 window.addEventListener("mouseout", function(event) {
+                    Me.touchCount--;
                     var from = event.relatedTarget || event.toElement;
-                    if (!from || from.nodeName == "HTML") {
+                    if (!from || from.nodeName === "HTML") {
                         endFun(event);
                     }
                     event.preventDefault();
                 }, false);
             } else {
-                dom.addEventListener(CONST.CANCEL, function(event) {
+                dom.addEventListener(this.EVENT.CANCEL, function(event) {
+                    console.log("===== " + Me.EVENT.CANCEL + " =====");
+                    Me.touchCount--;
                     var now = Date.now();
                     if (Me.beforeCancel !== null && Me.beforeCancel(event) === false) {
                         return;
                     }
-                    Me.reset();
+                    // Me.reset();
                     Me.onCancel(event, now);
                     if (Me.preventDefaultCancel || Me.preventDefault) {
                         event.preventDefault();
@@ -152,7 +175,7 @@ var Toucher = Toucher || {};
                 }, this.useCapture);
             }
 
-            if (!this.useMouse && this.ignoreNativeGesture) {
+            if (this.useMouse === false && this.ignoreNativeGesture) {
                 // gesturestart, gesturechange, gestureend
                 if ("ongesturestart" in window) {
                     window.addEventListener("gesturestart", function(event) {
@@ -181,40 +204,13 @@ var Toucher = Toucher || {};
 
             this.touched = {};
             this.touchedCount = 0;
+
+            for (var i = 0, len = this.listenerList.length; i < len; i++) {
+                var listener = this.listenerList[i];
+                listener.reset();
+            }
         },
 
-        updateDomOffset: function() {
-            var dom = this.dom;
-            if (dom === window || dom === document) {
-                this.offsetLeft = 0;
-                this.offsetTop = 0;
-                return;
-            }
-
-            if (dom.getBoundingClientRect !== undefined) {
-                var x = window.pageXOffset,
-                    y = 0;
-                if (x || x === 0) {
-                    y = window.pageYOffset;
-                } else {
-                    x = document.body.scrollLeft;
-                    y = document.body.scrollTop;
-                }
-                var rect = dom.getBoundingClientRect();
-                this.offsetLeft = rect.left + x;
-                this.offsetTop = rect.top + y;
-                return;
-            }
-
-            var left = dom.offsetLeft,
-                top = dom.offsetTop;
-            while ((dom = dom.parentNode) && dom !== document.body && dom !== document) {
-                left += dom.offsetLeft;
-                top += dom.offsetTop;
-            }
-            this.offsetLeft = left;
-            this.offsetTop = top;
-        },
 
         beforeStart: null,
         onStart: function(event, now) {
@@ -274,8 +270,16 @@ var Toucher = Toucher || {};
                 var touchWrapper = this.touched[touchId];
                 touchWrapper = new this.wrapperClass(touchId);
                 touchWrapper.pixelRatio = this.pixelRatio;
+
                 touchWrapper.offsetX = this.offsetX;
                 touchWrapper.offsetY = this.offsetY;
+                touchWrapper.offsetLeft = this.offsetLeft;
+                touchWrapper.offsetTop = this.offsetTop;
+
+                touchWrapper.orientation = this.orientation;
+                touchWrapper.canvasWidth = this.canvasWidth;
+                touchWrapper.canvasHeight = this.canvasHeight;
+                touchWrapper.EVENT = this.EVENT;
 
                 this.touched[touchId] = touchWrapper;
                 this.touchedCount++;
@@ -326,7 +330,7 @@ var Toucher = Toucher || {};
             var changedList = event[CONST.changedTouches] || [event];
 
             var _touched = {};
-            if (!this.useMouse) {
+            if (this.useMouse === false) {
                 // TODO : CONST.touches or CONST.targetTouches , it's a question!
                 var _touchedList = event[CONST.touches];
                 for (var j = _touchedList.length - 1; j >= 0; j--) {
@@ -368,7 +372,7 @@ var Toucher = Toucher || {};
 
         removeWrapper: function(list, id) {
             for (var i = list.length - 1; i >= 0; i--) {
-                if (list[i].identifier == id) {
+                if (list[i].identifier === id) {
                     list.splice(i, 1);
                     return id;
                 }
@@ -395,8 +399,6 @@ var Toucher = Toucher || {};
 
         addListener: function(listener) {
             listener.controller = this;
-            listener.offsetLeft = this.offsetLeft;
-            listener.offsetTop = this.offsetTop;
             listener.init();
             this.listenerList.push(listener);
             // TODO : order by listener.order
@@ -405,7 +407,7 @@ var Toucher = Toucher || {};
 
         removeListener: function(listener) {
             for (var i = this.listenerList.length - 1; i >= 0; i--) {
-                if (this.listenerList[i] == listener) {
+                if (this.listenerList[i] === listener) {
                     this.listenerList.splice(i, 1);
                     listener.controller = null;
                     return listener;
@@ -414,8 +416,9 @@ var Toucher = Toucher || {};
             return null;
         },
 
-        removeAllListener: function() {
+        removeAllListeners: function() {
             for (var i = this.listenerList.length - 1; i >= 0; i--) {
+                var listener = this.listenerList[i];
                 listener.controller = null;
             }
             this.listenerList.length = 0;

@@ -15,12 +15,19 @@ var Toucher = Toucher || {};
         constructor: TouchWrapper,
 
         pixelRatio: 1,
+        offsetLeft: 0,
+        offsetTop: 0,
+        canvasWidth: 0,
+        canvasHeight: 0,
+        orientation: 0,
+
+
         offsetX: 0,
         offsetY: 0,
 
         start: function(rawTouch, rawEvent) {
 
-            this.type = CONST.START;
+            this.type = this.EVENT.START;
 
             this.update(rawTouch, rawEvent);
 
@@ -43,7 +50,7 @@ var Toucher = Toucher || {};
 
         move: function(rawTouch, rawEvent) {
 
-            this.type = CONST.MOVE;
+            this.type = this.EVENT.MOVE;
 
             this.lastMoveTime = this.moveTime;
 
@@ -55,7 +62,7 @@ var Toucher = Toucher || {};
 
         end: function(rawTouch, rawEvent) {
 
-            this.type = CONST.END;
+            this.type = this.EVENT.END;
 
             var deltaX = this.deltaX;
             var deltaY = this.deltaY;
@@ -89,8 +96,29 @@ var Toucher = Toucher || {};
             // this.lastClientY = this.clientY;
 
             this.target = rawTouch.target;
-            this.pageX = rawTouch.pageX * this.pixelRatio + this.offsetX;
-            this.pageY = rawTouch.pageY * this.pixelRatio + this.offsetY;
+
+            var x = (rawTouch.pageX - this.offsetLeft) * this.pixelRatio;
+            var y = (rawTouch.pageY - this.offsetTop) * this.pixelRatio;
+            if (this.orientation === 0) {
+                this.pageX = x;
+                this.pageY = y;
+            } else if (this.orientation === -90) {
+                y = y - this.canvasHeight;
+                this.pageX = -y;
+                this.pageY = x;
+            } else if (this.orientation === 90) {
+                x = x - this.canvasWidth;
+                this.pageX = y;
+                this.pageY = -x;
+            } else if (this.orientation === 180) {
+                x = x - this.canvasWidth;
+                y = y - this.canvasHeight;
+                this.pageX = -x;
+                this.pageY = -y;
+            }
+            this.pageX -= this.offsetX;
+            this.pageY -= this.offsetY;
+
             // this.clientX = rawTouch.clientX * this.pixelRatio;
             // this.clientY = rawTouch.clientY * this.pixelRatio;
 
@@ -99,6 +127,29 @@ var Toucher = Toucher || {};
             this.moveAmountX = this.pageX - this.startPageX;
             this.moveAmountY = this.pageY - this.startPageY;
 
+        },
+        getData: function() {
+            var data = {};
+
+            data.touching = this.touching;
+            data.type = this.type;
+            data.startTime = this.startTime;
+            data.moveTime = this.moveTime;
+            data.endTime = this.endTime;
+
+            data.startPageX = this.startPageX;
+            data.startPageY = this.startPageY;
+            data.pageX = this.pageX;
+            data.pageY = this.pageY;
+            data.endPageX = this.endPageX;
+            data.endPageY = this.endPageY;
+
+            data.deltaX = this.deltaX;
+            data.deltaY = this.deltaY;
+            data.moveAmountX = this.moveAmountX;
+            data.moveAmountY = this.moveAmountY;
+
+            return data;
         }
 
     };
