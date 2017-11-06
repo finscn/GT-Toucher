@@ -57,9 +57,9 @@ Toucher.Pinch = Toucher.Listener.extend({
     "end": function(wrappers, event, controller) {
         for (var i = 0; i < wrappers.length; i++) {
             var wrapper = wrappers[i];
-            if (this.touchA && this.touchA.id == wrapper.id) {
+            if (this.touchA && this.touchA.id === wrapper.id) {
                 this.touchA = null;
-            } else if (this.touchB && this.touchB.id == wrapper.id) {
+            } else if (this.touchB && this.touchB.id === wrapper.id) {
                 this.touchB = null;
             } else {
                 break;

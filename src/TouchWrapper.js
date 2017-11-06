@@ -7,23 +7,20 @@ var Toucher = Toucher || {};
     var CONST = exports.CONST;
 
     var TouchWrapper = function(identifier) {
+        this.pixelRatio = 1;
+        this.offsetLeft = 0;
+        this.offsetTop = 0;
+        this.orientation = 0;
+
+        this.offsetX = 0;
+        this.offsetY = 0;
+
         this.identifier = identifier;
         this.id = identifier;
     };
 
     var proto = {
         constructor: TouchWrapper,
-
-        pixelRatio: 1,
-        offsetLeft: 0,
-        offsetTop: 0,
-        canvasWidth: 0,
-        canvasHeight: 0,
-        orientation: 0,
-
-
-        offsetX: 0,
-        offsetY: 0,
 
         start: function(rawTouch, rawEvent) {
 
@@ -45,7 +42,6 @@ var Toucher = Toucher || {};
 
             this.touching = true;
             this.startTime = this.endTime = this.moveTime = Date.now();
-
         },
 
         move: function(rawTouch, rawEvent) {
@@ -57,7 +53,6 @@ var Toucher = Toucher || {};
             this.update(rawTouch, rawEvent);
 
             this.moveTime = Date.now();
-
         },
 
         end: function(rawTouch, rawEvent) {
@@ -83,7 +78,6 @@ var Toucher = Toucher || {};
 
         },
 
-
         update: function(rawTouch, rawEvent) {
 
             this.rawEvent = rawEvent;
@@ -97,25 +91,39 @@ var Toucher = Toucher || {};
 
             this.target = rawTouch.target;
 
-            var x = (rawTouch.pageX - this.offsetLeft) * this.pixelRatio;
-            var y = (rawTouch.pageY - this.offsetTop) * this.pixelRatio;
+            var px = rawTouch.pageX;
+            var py = rawTouch.pageY;
+
+            var x, y;
             if (this.orientation === 0) {
-                this.pageX = x;
-                this.pageY = y;
+                x = px - this.offsetLeft;
+                y = py - this.offsetTop;
             } else if (this.orientation === -90) {
-                y = y - this.canvasHeight;
-                this.pageX = -y;
-                this.pageY = x;
+                x = this.pageHeight - py;
+                y = px - this.offsetLeft;
             } else if (this.orientation === 90) {
-                x = x - this.canvasWidth;
-                this.pageX = y;
-                this.pageY = -x;
+                x = py - this.offsetTop;
+                y = this.pageWidth - px;
             } else if (this.orientation === 180) {
-                x = x - this.canvasWidth;
-                y = y - this.canvasHeight;
-                this.pageX = -x;
-                this.pageY = -y;
+                x = this.pageWidth - px;
+                y = this.pageHeight - py;
+            } else {
+                // orientation === 0
+                x = px - this.offsetLeft;
+                y = py - this.offsetTop;
             }
+
+            this.pageX = x * this.pixelRatio;
+            this.pageY = y * this.pixelRatio;
+
+            // if (this.type === this.EVENT.START) {
+            //     console.log("controller ", this.orientation, this.pixelRatio, this.pageWidth, this.pageHeight);
+            //     console.log("     ", px, py);
+            //     console.log("  after ", this.pageX, this.pageY);
+            //     console.log("     ", this.offsetX, this.offsetY);
+            //     console.log("     ", this.offsetLeft, this.offsetTop);
+            // }
+
             this.pageX -= this.offsetX;
             this.pageY -= this.offsetY;
 
@@ -128,6 +136,7 @@ var Toucher = Toucher || {};
             this.moveAmountY = this.pageY - this.startPageY;
 
         },
+
         getData: function() {
             var data = {};
 

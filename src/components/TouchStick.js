@@ -19,7 +19,6 @@ Toucher.TouchStick = Toucher.TouchButton.extend({
     stickRadius: 35,
     minMoveRadius: 0, // scale
     maxMoveRadius: 100, // scale
-    axesRadius: null,
 
     wayCount: 0, // 0 or null ==> full-ways
 
@@ -30,9 +29,9 @@ Toucher.TouchStick = Toucher.TouchButton.extend({
     strength: 0,
     scale: 1,
 
+    touchRegion: null,
+
     warningEdge: 0,
-    screenWidth: 0,
-    screenHeight: 0,
 
     bgColor: "rgba(0,0,0,0.5)",
     centerColor: "rgba(255,100,100,0.2)",
@@ -62,8 +61,15 @@ Toucher.TouchStick = Toucher.TouchButton.extend({
         this.maxMoveRadius *= scale;
         this.followSpeed *= scale;
         this.followDistance *= scale;
-        this.axesRadius = this.maxMoveRadius;
         this.updateConfig();
+    },
+
+    isInTouchRegion: function(x, y) {
+        var r = this.touchRegion;
+        if (!r) {
+            return true;
+        }
+        return r[0] < x && x < r[2] && r[1] < y && y < r[3];
     },
 
     start: function(wrappers, event, controller) {

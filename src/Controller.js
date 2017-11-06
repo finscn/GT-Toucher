@@ -14,6 +14,7 @@ var Toucher = Toucher || {};
     CONST.defaultTouchId = 1;
 
     var Controller = function(cfg) {
+        this.initialize();
 
         for (var property in cfg) {
             this[property] = cfg[property];
@@ -25,45 +26,51 @@ var Toucher = Toucher || {};
     var proto = {
         constructor: Controller,
 
-        wrapperClass: null,
+        initialize: function() {
+            this.wrapperClass = null;
 
-        host: window,
-        dom: document,
+            this.host = window;
+            this.dom = document;
 
-        pixelRatio: 1,
-        offsetLeft: 0,
-        offsetTop: 0,
-        canvasWidth: 0,
-        canvasHeight: 0,
-        orientation: 0,
+            this.pixelRatio = 1;
+            this.offsetLeft = 0;
+            this.offsetTop = 0;
+            this.canvasWidth = 0;
+            this.canvasHeight = 0;
+            this.orientation = 0;
 
-        offsetX: 0,
-        offsetY: 0,
+            this.offsetX = 0;
+            this.offsetY = 0;
 
-        supportMultiTouch: false,
-        useMouse: null,
-        useTouch: null,
-        useCapture: true,
-        preventDefault: false, // is preventDefault All
+            this.supportMultiTouch = false;
+            this.useMouse = null;
+            this.useTouch = null;
 
-        ignoreNativeGesture: true,
+            this.useCapture = true;
+            this.usePassive = false;
 
-        preventDefaultStart: false,
-        preventDefaultMove: false,
-        preventDefaultEnd: false,
-        preventDefaultCancel: false,
+            // is preventDefault All
+            this.preventDefault = false;
+
+            this.ignoreNativeGesture = true;
+
+            this.preventDefaultStart = false;
+            this.preventDefaultMove = false;
+            this.preventDefaultEnd = false;
+            this.preventDefaultCancel = false;
 
 
-        touchKeepTime: 30,
-        maxTouch: 5,
-        startTouches: null,
-        moveTouches: null,
-        endTouches: null,
+            this.touchKeepTime = 30;
+            this.maxTouch = 5;
+            this.startTouches = null;
+            this.moveTouches = null;
+            this.endTouches = null;
 
-        moveTick: 0,
-        moveInterval: 0,
-        touchCount: 0,
-        touchedCount: 0,
+            this.moveTick = 0;
+            this.moveInterval = 0;
+            this.touchCount = 0;
+            this.touchedCount = 0;
+        },
 
 
         beforeInit: function() {},
@@ -109,7 +116,27 @@ var Toucher = Toucher || {};
 
             var dom = this.dom;
 
+            this.pageWidth = dom.clientWidth;
+            this.pageHeight = dom.clientHeight;
+
             var Me = this;
+
+            var options = {
+                capture: this.useCapture,
+                passive: this.usePassive,
+            };
+            var passiveSupported = false;
+            try {
+                var options = Object.defineProperty({}, "passive", {
+                    get: function() {
+                        passiveSupported = true;
+                    }
+                });
+                window.addEventListener("__test__", null, options);
+            } catch (err) {}
+            if (!passiveSupported) {
+                options = this.useCapture;
+            }
 
             this._startHook = function(event) {
                 Me.touchCount++;
@@ -125,7 +152,7 @@ var Toucher = Toucher || {};
                     event.preventDefault();
                 }
             };
-            dom.addEventListener(this.EVENT.START, this._startHook, this.useCapture);
+            dom.addEventListener(this.EVENT.START, this._startHook, options);
 
             this._moveHook = function(event) {
                 var now = Date.now();
@@ -138,7 +165,7 @@ var Toucher = Toucher || {};
                     event.preventDefault();
                 }
             };
-            dom.addEventListener(this.EVENT.MOVE, this._moveHook, this.useCapture);
+            dom.addEventListener(this.EVENT.MOVE, this._moveHook, options);
 
             this._endHook = function(event) {
                 Me.touchCount--;
@@ -151,7 +178,7 @@ var Toucher = Toucher || {};
                     event.preventDefault();
                 }
             };
-            dom.addEventListener(this.EVENT.END, this._endHook, this.useCapture);
+            dom.addEventListener(this.EVENT.END, this._endHook, options);
 
             if (this.useMouse === true) {
                 this._outHook = function(event) {
@@ -162,7 +189,10 @@ var Toucher = Toucher || {};
                     }
                     event.preventDefault();
                 };
-                window.addEventListener("mouseout", this._outHook, false);
+                // TODO:
+                //   window / dom ?
+                //   options.capture = true/false ?
+                window.addEventListener("mouseout", this._outHook, options);
             } else {
                 this._cancelHook = function(event) {
                     console.log("===== " + Me.EVENT.CANCEL + " =====");
@@ -177,7 +207,7 @@ var Toucher = Toucher || {};
                         event.preventDefault();
                     }
                 };
-                dom.addEventListener(this.EVENT.CANCEL, this._cancelHook, this.useCapture);
+                dom.addEventListener(this.EVENT.CANCEL, this._cancelHook, options);
             }
 
             if (this.useMouse === false && this.ignoreNativeGesture) {
@@ -186,9 +216,9 @@ var Toucher = Toucher || {};
                     this._gestureHook = function(event) {
                         event.preventDefault();
                     };
-                    window.addEventListener("gesturestart", this._gestureHook, false);
-                    window.addEventListener("gesturechange", this._gestureHook, false);
-                    window.addEventListener("gestureend", this._gestureHook, false);
+                    window.addEventListener("gesturestart", this._gestureHook, true);
+                    window.addEventListener("gesturechange", this._gestureHook, true);
+                    window.addEventListener("gestureend", this._gestureHook, true);
                 }
             }
 
@@ -306,15 +336,16 @@ var Toucher = Toucher || {};
                 var touchWrapper = this.touched[touchId];
                 touchWrapper = new this.wrapperClass(touchId);
                 touchWrapper.pixelRatio = this.pixelRatio;
+                touchWrapper.orientation = this.orientation;
+
+                touchWrapper.pageWidth = this.pageWidth;
+                touchWrapper.pageHeight = this.pageHeight;
 
                 touchWrapper.offsetX = this.offsetX;
                 touchWrapper.offsetY = this.offsetY;
                 touchWrapper.offsetLeft = this.offsetLeft;
                 touchWrapper.offsetTop = this.offsetTop;
 
-                touchWrapper.orientation = this.orientation;
-                touchWrapper.canvasWidth = this.canvasWidth;
-                touchWrapper.canvasHeight = this.canvasHeight;
                 touchWrapper.EVENT = this.EVENT;
 
                 this.touched[touchId] = touchWrapper;

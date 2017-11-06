@@ -4,7 +4,6 @@ Toucher.TouchButton = Toucher.Listener.extend({
 
     touchId: null,
     disabled: false,
-    touchRegion: null,
     floating: false,
 
     pressed: false,
@@ -14,6 +13,7 @@ Toucher.TouchButton = Toucher.Listener.extend({
     y: 0,
     width: 0,
     height: 0,
+
     enterDown: true,
     leaveUp: true,
 
@@ -23,23 +23,26 @@ Toucher.TouchButton = Toucher.Listener.extend({
 
     init: function() {
         this.beforeInit();
-        this.anchorX = this.width >> 1;
-        this.anchorY = this.height >> 1;
 
-        this.updateAABB();
+        this.aabb = [];
 
-        this.touchRegion = this.touchRegion || this.aabb;
+        this.resize();
 
         this.onInit();
     },
 
+    resize: function() {
+        this.anchorX = this.width >> 1;
+        this.anchorY = this.height >> 1;
+        this.updateAABB();
+        this.reset();
+    },
+
     updateAABB: function() {
-        this.aabb = [
-            this.x - this.anchorX,
-            this.y - this.anchorY,
-            this.x + this.anchorX,
-            this.y + this.anchorY
-        ];
+        this.aabb[0] = this.x - this.anchorX;
+        this.aabb[1] = this.y - this.anchorY;
+        this.aabb[2] = this.x + this.anchorX;
+        this.aabb[3] = this.y + this.anchorY;
     },
 
     setScale: function(scale) {
@@ -53,14 +56,6 @@ Toucher.TouchButton = Toucher.Listener.extend({
 
     filterWrapper: function(type, wrapper, event, controller) {
         return !this.disabled; //true;
-    },
-
-    isInTouchRegion: function(x, y) {
-        var r = this.touchRegion;
-        if (!r) {
-            return true;
-        }
-        return r[0] < x && x < r[2] && r[1] < y && y < r[3];
     },
 
     checkPointInAABB: function(x, y) {
@@ -201,13 +196,13 @@ Toucher.TouchButton = Toucher.Listener.extend({
         if (!this.visible) {
             return;
         }
-        var r = this.touchRegion;
+        var aabb = this.aabb;
         if (this.touched) {
             context.fillStyle = "rgba(0,0,0,0.5)";
         } else {
             context.fillStyle = "rgba(0,0,0,0.2)";
         }
-        context.fillRect(r[0], r[1], r[2] - r[0], r[3] - r[1]);
+        context.fillRect(aabb[0], aabb[1], aabb[2] - aabb[0], aabb[3] - aabb[1]);
     }
 
 });
