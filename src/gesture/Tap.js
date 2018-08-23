@@ -52,7 +52,7 @@ Toucher.Tap = Toucher.Listener.extend({
                 wrapper.index = index++;
                 this.onTap(x, y, wrapper, event, controller);
             }
-            if (this.onTouchEnd != null) {
+            if (this.onTouchEnd) {
                 this.onTouchEnd(x, y, wrapper, event, controller);
             }
         }

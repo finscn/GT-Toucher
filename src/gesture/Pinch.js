@@ -67,7 +67,7 @@ Toucher.Pinch = Toucher.Listener.extend({
         }
         if (!this.touchA || !this.touchB) {
             this.startDistance = null;
-            if (this.onPinchEnd != null) {
+            if (this.onPinchEnd) {
                 this.onPinchEnd(wrappers, event, controller);
             }
         }

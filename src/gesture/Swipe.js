@@ -36,7 +36,7 @@ Toucher.Swipe = Toucher.Listener.extend({
                 }
             }
 
-            if (this.onTouchEnd != null) {
+            if (this.onTouchEnd) {
                 this.onTouchEnd(x, y, wrapper, event, controller);
             }
         }

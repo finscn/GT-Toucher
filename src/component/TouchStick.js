@@ -2,6 +2,10 @@
 
 Toucher.TouchStick = Toucher.TouchButton.extend({
 
+    stick: true,
+
+    strength: 0,
+
     rad: 0,
     cos: 1,
     sin: 0,
@@ -16,17 +20,19 @@ Toucher.TouchStick = Toucher.TouchButton.extend({
     moveRadius: 0,
     distance: 0,
 
+    arrows: null,
+    horizontal: false,
+
+    sensitive: false,
+    wayCount: 0, // 0 or null ==> full-ways
+
     stickRadius: 35,
     minMoveRadius: 0, // scale
     maxMoveRadius: 100, // scale
 
-    wayCount: 0, // 0 or null ==> full-ways
-
     followSpeed: 0, // scale
     followDistance: 0, // scale
 
-    sensitive: false,
-    strength: 0,
     scale: 1,
 
     touchRegion: null,
@@ -62,6 +68,7 @@ Toucher.TouchStick = Toucher.TouchButton.extend({
         this.followSpeed *= scale;
         this.followDistance *= scale;
         this.updateConfig();
+        this.reset();
     },
 
     isInTouchRegion: function(x, y) {
@@ -121,14 +128,23 @@ Toucher.TouchStick = Toucher.TouchButton.extend({
         var dy = this.axesY = y;
 
         if (!dx && !dy) {
-            this.strength = 0;
             this.distance = 0;
-            this.moveX = this.moveY = this.moveRadius = 0;
+            this.arrows["LEFT"] = false;
+            this.arrows["RIGHT"] = false;
+            this.arrows["UP"] = false;
+            this.arrows["DOWN"] = false;
+            this.horizontal = false;
+            this.moveX = this.moveY = this.moveRadius = this.strength = 0;
             return false;
         }
 
         var r = this.distance = Math.sqrt(dx * dx + dy * dy);
         if (r < this.minMoveRadius) {
+            this.arrows["LEFT"] = false;
+            this.arrows["RIGHT"] = false;
+            this.arrows["UP"] = false;
+            this.arrows["DOWN"] = false;
+            this.horizontal = false;
             this.moveX = this.moveY = this.moveRadius = this.strength = 0;
             return false;
         }
@@ -150,6 +166,12 @@ Toucher.TouchStick = Toucher.TouchButton.extend({
         this.moveX = dx;
         this.moveY = dy;
         this.moveRadius = r;
+
+        this.arrows["LEFT"] = dx < 0;
+        this.arrows["RIGHT"] = dx > 0;
+        this.arrows["UP"] = dy < 0;
+        this.arrows["DOWN"] = dy > 0;
+        this.horizontal = Math.abs(dx) >= Math.abs(dy);
     },
 
     end: function(wrappers, event, controller) {
@@ -185,6 +207,14 @@ Toucher.TouchStick = Toucher.TouchButton.extend({
         this.rad = 0;
         this.cos = 1;
         this.sin = 0;
+
+        this.arrows = {
+            "LEFT": false,
+            "RIGHT": false,
+            "UP": false,
+            "DOWN": false,
+        };
+        this.horizontal = false;
     },
 
     followTouch: function(timeStep) {

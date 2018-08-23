@@ -302,7 +302,7 @@ var Toucher = Toucher || {};
             // console.log("cancel", this.listenerList.length)
             for (var i = 0, len = this.listenerList.length; i < len; i++) {
                 var listener = this.listenerList[i];
-                if (listener["cancel"] != null) {
+                if (listener["cancel"]) {
                     if (listener["cancel"](null, event, this) === false) {
                         break;
                     }
@@ -373,7 +373,6 @@ var Toucher = Toucher || {};
                 var touchId = id || id === 0 ? id : CONST.defaultTouchId;
 
                 var touchWrapper = this.touched[touchId];
-
                 if (touchWrapper) {
 
                     if (!touchWrapper.moveTime) {
@@ -387,7 +386,6 @@ var Toucher = Toucher || {};
 
                     touchWrapper["move"](touch, event);
                     moveWrappers.push(touchWrapper);
-
                 }
             }
             return moveWrappers;
@@ -396,15 +394,15 @@ var Toucher = Toucher || {};
         getEndWrappers: function(event, now) {
             var changedList = event[CONST.changedTouches] || [event];
 
-            var _touched = {};
-            if (this.useMouse === false) {
-                // TODO : CONST.touches or CONST.targetTouches , it's a question!
-                var _touchedList = event[CONST.touches];
-                for (var j = _touchedList.length - 1; j >= 0; j--) {
-                    var t = _touchedList[j];
-                    _touched[t.identifier] = true;
-                }
-            }
+            // var _touched = {};
+            // if (this.useMouse === false) {
+            //     // TODO : CONST.touches or CONST.targetTouches , it's a question!
+            //     var _touchedList = event[CONST.touches];
+            //     for (var j = _touchedList.length - 1; j >= 0; j--) {
+            //         var t = _touchedList[j];
+            //         _touched[t.identifier] = true;
+            //     }
+            // }
 
             var endWrappers = [];
             for (var i = 0, len = changedList.length; i < len; i++) {
@@ -412,25 +410,27 @@ var Toucher = Toucher || {};
                 var id = touch.identifier;
                 var touchId = id || id === 0 ? id : CONST.defaultTouchId;
 
-                if (!_touched[touchId]) {
-                    var touchWrapper = this.touched[touchId];
-                    if (touchWrapper) {
-                        touchWrapper["end"](touch, event);
+                // if (_touched[touchId]) {
+                //     continue;
+                // }
+                var touchWrapper = this.touched[touchId];
+                if (touchWrapper) {
 
-                        delete this.touched[touchId];
-                        this.touchedCount--;
+                    touchWrapper["end"](touch, event);
 
-                        endWrappers.push(touchWrapper);
+                    delete this.touched[touchId];
+                    this.touchedCount--;
 
-                        var _touches = this.endTouches;
-                        if (now - _touches.lastTime > this.touchKeepTime) {
-                            _touches.length = 0;
-                        }
-                        _touches.lastTime = now;
-                        _touches.push(touchWrapper);
-                        this.removeWrapper(this.startTouches, touchId);
-                        this.removeWrapper(this.moveTouches, touchId);
+                    endWrappers.push(touchWrapper);
+
+                    var _touches = this.endTouches;
+                    if (now - _touches.lastTime > this.touchKeepTime) {
+                        _touches.length = 0;
                     }
+                    _touches.lastTime = now;
+                    _touches.push(touchWrapper);
+                    this.removeWrapper(this.startTouches, touchId);
+                    this.removeWrapper(this.moveTouches, touchId);
                 }
             }
 
@@ -450,7 +450,7 @@ var Toucher = Toucher || {};
         dispatch: function(type, wrappers, event) {
             for (var i = 0, len = this.listenerList.length; i < len; i++) {
                 var listener = this.listenerList[i];
-                if (listener[type] != null) {
+                if (listener[type]) {
                     var validWrappers = listener.filterWrappers(type, wrappers, event, this);
                     if (validWrappers === true) {
                         validWrappers = wrappers;
@@ -498,8 +498,8 @@ var Toucher = Toucher || {};
             dom.removeEventListener(this.EVENT.START, this._startHook, this.useCapture);
             dom.removeEventListener(this.EVENT.MOVE, this._moveHook, this.useCapture);
             dom.removeEventListener(this.EVENT.END, this._endHook, this.useCapture);
-            window.removeEventListener("mouseout", this._outHook, false);
             dom.removeEventListener(this.EVENT.CANCEL, this._cancelHook, this.useCapture);
+            window.removeEventListener("mouseout", this._outHook, false);
             window.removeEventListener("gesturestart", this._gestureHook, false);
             window.removeEventListener("gesturechange", this._gestureHook, false);
             window.removeEventListener("gestureend", this._gestureHook, false);

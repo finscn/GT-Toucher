@@ -89,7 +89,7 @@ var Toucher = Toucher || {};
             // this.lastClientX = this.clientX;
             // this.lastClientY = this.clientY;
 
-            this.target = rawTouch.target;
+            this.target = rawTouch.target || rawEvent.target;
 
             var px = rawTouch.pageX;
             var py = rawTouch.pageY;
