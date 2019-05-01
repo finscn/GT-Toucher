@@ -68,7 +68,6 @@ var Toucher = Toucher || {};
             if (this.disabled) {
                 return;
             }
-
             for (var name in this.buttons) {
                 var button = this.buttons[name];
                 button.update(timeStep, now);

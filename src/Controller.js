@@ -48,6 +48,7 @@ var Toucher = Toucher || {};
 
             this.useCapture = true;
             this.usePassive = false;
+            this.useOnce = false;
 
             // is preventDefault All
             this.preventDefault = false;
@@ -78,6 +79,17 @@ var Toucher = Toucher || {};
 
             this.listenerList = [];
             this.EVENT = {};
+
+            var passiveSupported = false;
+            try {
+                var options = Object.defineProperty({}, "passive", {
+                    get: function() {
+                        passiveSupported = true;
+                    }
+                });
+                window.addEventListener("__test__", null, options);
+            } catch (err) {}
+            this.passiveSupported = passiveSupported;
 
             this.reset();
 
@@ -121,20 +133,14 @@ var Toucher = Toucher || {};
 
             var Me = this;
 
-            var options = {
-                capture: this.useCapture,
-                passive: this.usePassive,
-            };
-            var passiveSupported = false;
-            try {
-                var options = Object.defineProperty({}, "passive", {
-                    get: function() {
-                        passiveSupported = true;
-                    }
-                });
-                window.addEventListener("__test__", null, options);
-            } catch (err) {}
-            if (!passiveSupported) {
+            var options;
+            if (this.passiveSupported) {
+                options = {
+                    capture: this.useCapture,
+                    passive: this.usePassive,
+                    once: this.useOnce,
+                }
+            } else {
                 options = this.useCapture;
             }
 
@@ -149,7 +155,7 @@ var Toucher = Toucher || {};
                 }
                 Me.onStart(event, now);
                 if (Me.preventDefaultStart || Me.preventDefault) {
-                    event.preventDefault();
+                    Me.preventEventDefault(event);
                 }
             };
             dom.addEventListener(this.EVENT.START, this._startHook, options);
@@ -162,7 +168,7 @@ var Toucher = Toucher || {};
                 Me.moveTick = now;
                 Me.onMove(event, now);
                 if (Me.preventDefaultMove || Me.preventDefault) {
-                    event.preventDefault();
+                    Me.preventEventDefault(event);
                 }
             };
             dom.addEventListener(this.EVENT.MOVE, this._moveHook, options);
@@ -175,7 +181,7 @@ var Toucher = Toucher || {};
                 }
                 Me.onEnd(event, now);
                 if (Me.preventDefaultEnd || Me.preventDefault) {
-                    event.preventDefault();
+                    Me.preventEventDefault(event);
                 }
             };
             dom.addEventListener(this.EVENT.END, this._endHook, options);
@@ -187,7 +193,7 @@ var Toucher = Toucher || {};
                     if (!from || from.nodeName === "HTML") {
                         Me._endHook(event);
                     }
-                    event.preventDefault();
+                    Me.preventEventDefault(event);
                 };
                 // TODO:
                 //   window / dom ?
@@ -204,7 +210,7 @@ var Toucher = Toucher || {};
                     // Me.reset();
                     Me.onCancel(event, now);
                     if (Me.preventDefaultCancel || Me.preventDefault) {
-                        event.preventDefault();
+                        Me.preventEventDefault(event);
                     }
                 };
                 dom.addEventListener(this.EVENT.CANCEL, this._cancelHook, options);
@@ -214,7 +220,7 @@ var Toucher = Toucher || {};
                 // gesturestart, gesturechange, gestureend
                 if ("ongesturestart" in window) {
                     this._gestureHook = function(event) {
-                        event.preventDefault();
+                        Me.preventEventDefault(event);
                     };
                     window.addEventListener("gesturestart", this._gestureHook, true);
                     window.addEventListener("gesturechange", this._gestureHook, true);
@@ -227,6 +233,27 @@ var Toucher = Toucher || {};
             this.onInit();
         },
         onInit: function() {},
+
+        addEventListener: function(dom, type, listener, options) {
+            if (!this.passiveSupported) {
+                options = options.useCapture;
+            }
+            dom.addEventListener(type, listener, options);
+        },
+        removeEventListener: function(dom, type, listener, options) {
+            if (!this.passiveSupported) {
+                options = options.useCapture;
+            }
+            dom.removeEventListener(type, listener, options);
+        },
+
+        preventEventDefault: function(event) {
+            if (event.cancelable || !("cancelable" in event)) {
+                event.preventDefault();
+                return true;
+            }
+            return false;
+        },
 
         reset: function() {
 
