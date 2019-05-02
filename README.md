@@ -9,7 +9,7 @@
 ---------------
 
 
-GT-Toucher -- A Multi Touch Tool for Browser
+GT-Toucher -- A Multi-Touch Tool for Browser
 =========================
 
 GT-Toucher 是对支持多点触控的浏览器(目前只测试了 iOS safari)中touch事件的一个底层封装.
@@ -23,7 +23,7 @@ GT-Toucher 是对支持多点触控的浏览器(目前只测试了 iOS safari)�
 你可以设想一下 双手操作的横屏动作游戏 (虚拟摇杆+各种按键, 或者是双虚拟摇杆)
 
 
-工作原理 : 
+工作原理 :
 ---------------------
 * Controller 在外层元素(通常是document 或 document.body,也可以根据需求自定义)上监听touchstart touchmove touchend事件.
 * 向Controller 上注册自定义Listener实例, Listener实例里定义了该Listener要接收哪些touch事件(规则),以及如何响应这些事件(动作)
@@ -33,7 +33,7 @@ GT-Toucher 是对支持多点触控的浏览器(目前只测试了 iOS safari)�
 * TouchWrapper里包含了原生的touch对象,同时记录了一些触控事件的各种信息(详见源码)
 
 
-为什么不选择传统事件模型 : 
+为什么不选择传统事件模型 :
 ---------------------
 在传统的dom事件里,开发者通常使用形如下列形式的代码来实现事件的监听
 
@@ -117,7 +117,7 @@ Toucher.Tap = Toucher.Listener.extend({
 ```
 
 
-	
+
 具体用法: (以下只是代码片段,详见demo源码)
 
 
@@ -149,7 +149,7 @@ Toucher.Tap = Toucher.Listener.extend({
         //把自定义事件注册到controller里
         controller.addListener(tap);
     }
-	
+
 ```
 
 

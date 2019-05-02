@@ -1,0 +1,38 @@
+{
+  "name": "gt-toucher",
+  "version": "0.1.0",
+  "description": "A Multi-Touch Tool for Browser",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "build": "gulp build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/finscn/GT-Toucher.git"
+  },
+  "author": "finscn",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/finscn/GT-Toucher/issues"
+  },
+  "homepage": "https://github.com/finscn/GT-Toucher#readme",
+  "dependencies": {
+    "eslint": "^5.14.0",
+    "fs-extra": "^6.0.1",
+    "glob": "^7.1.3",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-eslint": "^4.0.2",
+    "gulp-if": "^2.0.2",
+    "gulp-inject-string": "^1.1.2",
+    "gulp-rename": "^1.4.0",
+    "gulp-shell": "^0.6.5",
+    "gulp-string-replace": "^1.1.2",
+    "gulp-uglify": "^3.0.1",
+    "pump": "^3.0.0",
+    "run-sequence": "^2.2.1"
+  }
+}
