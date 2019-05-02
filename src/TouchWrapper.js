@@ -7,20 +7,49 @@ var Toucher = Toucher || {};
     var CONST = exports.CONST;
 
     var TouchWrapper = function(identifier) {
-        this.pixelRatio = 1;
-        this.offsetLeft = 0;
-        this.offsetTop = 0;
-        this.orientation = 0;
+        this.init(identifier);
+    };
 
-        this.offsetX = 0;
-        this.offsetY = 0;
-
-        this.identifier = identifier;
-        this.id = identifier;
+    TouchWrapper.pool = [];
+    TouchWrapper.poolCursor = 0;
+    TouchWrapper.initPool = function(size) {
+        TouchWrapper.pool.length = 0;
+        for (var i = 0; i < size; i++) {
+            TouchWrapper.pool[i] = new TouchWrapper(0);
+        }
+    };
+    TouchWrapper.getInstance = function(identifier) {
+        var item = TouchWrapper.pool[TouchWrapper.poolCursor];
+        TouchWrapper.poolCursor++;
+        if (TouchWrapper.poolCursor >= TouchWrapper.pool.length) {
+            TouchWrapper.poolCursor = 0;
+        }
+        item.init(identifier)
+        return item;
     };
 
     var proto = {
         constructor: TouchWrapper,
+
+        init: function(identifier) {
+            identifier = identifier || 0;
+
+            this.pixelRatio = 1;
+            this.offsetLeft = 0;
+            this.offsetTop = 0;
+            this.orientation = 0;
+
+            this.offsetX = 0;
+            this.offsetY = 0;
+
+            this.identifier = identifier;
+            this.id = identifier;
+
+            this.updateTime = -1;
+            this.startTime = -1;
+            this.moveTime = -1;
+            this.endTime = -1;
+        },
 
         start: function(rawTouch, rawEvent) {
 
@@ -41,7 +70,7 @@ var Toucher = Toucher || {};
             this.moveAmountY = 0;
 
             this.touching = true;
-            this.startTime = this.endTime = this.moveTime = Date.now();
+            this.startTime = this.moveTime = this.endTime = this.updateTime;
         },
 
         move: function(rawTouch, rawEvent) {
@@ -52,7 +81,7 @@ var Toucher = Toucher || {};
 
             this.update(rawTouch, rawEvent);
 
-            this.moveTime = Date.now();
+            this.moveTime = this.updateTime;
         },
 
         end: function(rawTouch, rawEvent) {
@@ -74,8 +103,7 @@ var Toucher = Toucher || {};
             // this.endClientY = this.clientY;
 
             this.touching = false;
-            this.endTime = Date.now();
-
+            this.endTime = this.updateTime;
         },
 
         update: function(rawTouch, rawEvent) {
@@ -135,6 +163,7 @@ var Toucher = Toucher || {};
             this.moveAmountX = this.pageX - this.startPageX;
             this.moveAmountY = this.pageY - this.startPageY;
 
+            this.updateTime = Date.now();
         },
 
         getData: function() {
@@ -142,6 +171,7 @@ var Toucher = Toucher || {};
 
             data.touching = this.touching;
             data.type = this.type;
+            data.updateTime = this.updateTime;
             data.startTime = this.startTime;
             data.moveTime = this.moveTime;
             data.endTime = this.endTime;
@@ -166,6 +196,8 @@ var Toucher = Toucher || {};
     for (var p in proto) {
         TouchWrapper.prototype[p] = proto[p];
     }
+
+    TouchWrapper.initPool(20);
 
     exports.TouchWrapper = TouchWrapper;
 

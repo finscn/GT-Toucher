@@ -20,15 +20,12 @@ var Toucher = Toucher || {};
             this[property] = cfg[property];
         }
 
-        this.wrapperClass = this.wrapperClass || exports.TouchWrapper;
     };
 
     var proto = {
         constructor: Controller,
 
         initialize: function() {
-            this.wrapperClass = null;
-
             this.host = window;
             this.dom = document;
 
@@ -352,8 +349,9 @@ var Toucher = Toucher || {};
         },
 
         getStartWrappers: function(event, now) {
-            var changedList = event[CONST.changedTouches] || [event];
+            var TouchWrapper = exports.TouchWrapper;
 
+            var changedList = event[CONST.changedTouches] || [event];
             var startWrappers = [];
             for (var i = 0, len = changedList.length; i < len; i++) {
                 var touch = changedList[i];
@@ -361,7 +359,7 @@ var Toucher = Toucher || {};
                 var touchId = id || id === 0 ? id : CONST.defaultTouchId;
 
                 var touchWrapper = this.touched[touchId];
-                touchWrapper = new this.wrapperClass(touchId);
+                touchWrapper = TouchWrapper.getInstance(touchId);
                 touchWrapper.pixelRatio = this.pixelRatio;
                 touchWrapper.orientation = this.orientation;
 
